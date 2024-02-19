@@ -1,0 +1,76 @@
+@use '../base';
+
+.navbar-sidebar {
+    background: base.$white;
+    height: 100vh;
+    flex: 0 0 20%;
+    max-width: 300px;
+    display: flex;
+    flex-direction: column;
+    .user-info {
+        position: relative;
+        padding: 1rem;
+
+        &__avatar-thumb {
+            width: 100%;
+            max-width: 100px;
+            aspect-ratio: 1/1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 0 auto;
+
+            img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+            }
+        }
+
+        &__description {
+            a {
+                color: base.$dark;
+            }
+        }
+    }
+
+    .nav {
+        display: flex;
+        flex-direction: column;
+        list-style: none;
+
+        &__item {
+            padding: 1rem;
+            font-weight: bold;
+            position: relative;
+
+            a {
+                color: base.$gray;
+            }
+        }
+
+        &__item.active {
+            a {
+                color: base.$blue;
+            }
+
+            &::before {
+                content: '';
+                display: block;
+                position: absolute;
+                top: 50%;
+                left: 0;
+                height: 70%;
+                width: 3px;
+                background-color: base.$blue;
+                transform: translate(0, -50%);
+                margin-left: 3px;
+                box-shadow: 0 0 5px rgba($color: base.$blue, $alpha: 0.8);
+            }
+        }
+    }
+
+    .control-panel {
+        padding: 1rem;
+    }
+}

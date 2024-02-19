@@ -1,0 +1,63 @@
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+$white-smoke: #f5f7f9;
+$white: #ffffff;
+$blue-light: #82a5e2;
+$blue: #598df0;
+$dark: #373938;
+$gray: #969696;
+
+html,
+body {
+    background: $white-smoke;
+    font-family: Roboto, sans-serif;
+    color: $dark;
+
+    margin: 0;
+    padding: 0;
+}
+
+ul,
+ol {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+a {
+    text-decoration: none;
+    color: $blue;
+}
+
+.d-flex {
+    display: flex;
+}
+
+.text-center {
+    text-align: center;
+}
+
+.text-bold {
+    font-weight: bold;
+}
+
+
+.btn {
+    border: none;
+    padding: 1rem;
+    background: none;
+    font-weight: bold;
+    color: $gray;
+    cursor: pointer;
+}
+
+.card {
+    border: none;
+    border-radius: 3px;
+    background: $white;
+    box-shadow: 5px 5px 10rem rgba($color: #000000, $alpha: 0.1);
+}

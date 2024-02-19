@@ -1,0 +1,69 @@
+@use '../base';
+$blue-white: #ffe8ff;
+
+.chat-frame {
+    position: relative;
+    height: 100%;
+    min-height: 10rem;
+    max-height: 100%;
+
+    &__header {
+        position: relative;
+        padding: 1rem 2rem;
+        display: flex;
+        height: 20%;
+        max-height: 100px;
+        background: $blue-white;
+
+        &__user {
+            flex: 0 0 70%;
+            display: flex;
+            gap: 1rem;
+            position: relative;
+            align-items: center;
+
+            &__avatar {
+                height: 100%;
+                aspect-ratio: 1/1;
+                overflow: hidden;
+                border-radius: 50%;
+
+                img {
+                    width: 100%;
+                    height: 100%;
+                    object-fit: cover;
+                }
+            }
+
+            &__info {
+                a {
+                    color: base.$dark;
+                }
+
+                p {
+                    font-weight: bold;
+                }
+
+                small {
+                    color: base.$blue-light;
+                }
+            }
+        }
+
+        &__contact {
+            flex: 0 0 30%;
+            margin-right: 0;
+            margin-left: auto;
+            gap: 5px;
+            display: flex;
+            max-width: max-content;
+            align-items: center;
+        }
+    }
+
+    &__main {
+        position: relative;
+        height: 80%;
+        min-height: 10rem;
+    }
+}
