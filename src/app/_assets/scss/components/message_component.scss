@@ -112,4 +112,10 @@
     .message-component__show-more-btn {
         color: base.$dark;
     }
+
+    .message-component__submenu-control {
+        right: auto;
+        left: 0;
+        transform: translate(calc(-100% - 10px), 0);
+    }
 }

@@ -30,7 +30,22 @@ const ChatMessages: React.FunctionComponent<{
             time: new Date('2023-02-23'),
             isSelf: true,
             content: 'Đây là Ngọc Anh'
-        }
+        },
+        {
+            _id: '4',
+            username: 'ahp06',
+            time: new Date('2023-02-23'),
+            isSelf: true,
+            content: 'Have a nice day 😍'
+        },
+        {
+            _id: '5',
+            username: 'harryguci',
+            time: new Date('2023-02-23'),
+            isSelf: true,
+            content: 'Love u'
+        },
+        
     ]);
     const [limitState, setLimitState] = useState<number>(5);
 
