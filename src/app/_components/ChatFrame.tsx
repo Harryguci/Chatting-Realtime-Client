@@ -6,6 +6,7 @@ import Link from "next/link";
 import BtnCircle from "./BtnCircle";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPhone, faVideo } from "@fortawesome/free-solid-svg-icons";
+import ChatMessages from "./ChatMessages";
 
 function ChatFrame({ style }: { style: object }) {
 
@@ -39,7 +40,9 @@ function ChatFrame({ style }: { style: object }) {
                         </BtnCircle>
                     </div>
                 </div>
-                <div className="chat-frame__main"></div>
+                <div className="chat-frame__main">
+                    <ChatMessages friendUsername="harryguci" currentUsername="ahp06" limits={5}/>
+                </div>
                 <div className="chat-frame__control"></div>
             </div>
         </React.Fragment>

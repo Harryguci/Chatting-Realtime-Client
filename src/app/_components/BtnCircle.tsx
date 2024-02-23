@@ -2,14 +2,7 @@
 
 import { MouseEventHandler, ReactNode, memo, useState } from "react";
 import '../_assets/scss/components/btn_circle.scss';
-
-export interface IBtnCircle {
-    onClick: MouseEventHandler | undefined,
-    className: string | undefined,
-    id: string | undefined,
-    type: 'button' | 'reset' | 'submit' | undefined,
-
-};
+import IBtnCircle from "../_interfaces/IButtonCircle";;
 
 function BtnCircle({ onClick, className, id, type, children }: {
     onClick: MouseEventHandler | undefined,

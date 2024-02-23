@@ -5,7 +5,7 @@ import Link from "next/link";
 import '../_assets/scss/components/navbar_sidebar.scss';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faArrowDown } from '@fortawesome/free-solid-svg-icons'
-import { useRouter, usePathname } from "next/navigation";
+import { usePathname } from "next/navigation";
 export default function NavbarSidebar() {
     const pathname = usePathname();
 

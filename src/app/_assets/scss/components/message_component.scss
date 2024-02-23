@@ -1,0 +1,115 @@
+@use '../base';
+
+.chat-message {
+    margin: 0 1rem;
+    background: base.$white-smoke;
+}
+
+.message-component {
+    display: flex;
+    background: none;
+    position: relative;
+    gap: 10px;
+    max-height: 500px;
+    transition: max-height 0.5s ease-in-out;
+
+    &__avatar {
+        position: relative;
+        width: 30px;
+        height: 30px;
+        margin: 6px 0 0 0;
+
+        border-radius: 50%;
+        overflow: hidden;
+
+        img {
+            background: #ffffff;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+    }
+
+    &__main {
+        background: rgb(130, 165, 226);
+        background: linear-gradient(50deg, rgba(130, 165, 226, 1) 0%, rgba(89, 141, 240, 1) 100%);
+        position: relative;
+        color: white;
+
+        margin-left: 0;
+        margin-right: auto;
+
+        width: 50%;
+        margin-top: 5px;
+        margin-bottom: 5px;
+        padding: 1rem 1.5rem;
+        border-radius: 0.2rem 0.7rem 0.7rem 0.7rem;
+
+        box-shadow: 0 5px 10px rgba($color: #0000ff, $alpha: 0.1);
+
+        &__username,
+        small {
+            opacity: 50%;
+            transition: all 0.3s ease-in-out;
+            font-size: 12px;
+        }
+    }
+
+    &__show-more-btn {
+        color: base.$white-smoke;
+
+        position: absolute;
+        right: 10px;
+        top: 10px;
+    }
+
+    &__submenu-control {
+        position: absolute;
+        display: block;
+        overflow: hidden;
+        right: 0;
+        top: 10px;
+        transform: translate(calc(100% + 10px));
+        color: base.$dark;
+        font-size: 12px;
+        z-index: 10;
+
+        transition-duration: 0.5s;
+        transition-property: max-height;
+
+        ul {
+            background: rgba($color: base.$white, $alpha: 0.8);
+            border-radius: 5px;
+            overflow: hidden;
+
+            li {
+                cursor: pointer;
+                button {
+                    padding: 5px 10px;
+                }
+
+                &:hover {
+                    background: #f0f0ff;
+                }
+            }
+        }
+    }
+}
+
+.message-component.right {
+    flex-direction: row-reverse;
+
+    .message-component__main {
+        margin-right: 0;
+        margin-left: auto;
+        border-radius: 0.7rem 0.2rem 0.7rem 0.7rem;
+
+        border: 1px solid #c7c7c7;
+        background: base.$white;
+        color: base.$dark;
+    }
+
+    .message-component__show-more-btn {
+        color: base.$dark;
+    }
+}
