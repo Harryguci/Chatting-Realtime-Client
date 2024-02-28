@@ -18,7 +18,8 @@ const ChatMessages: React.FunctionComponent<{
     const getMessage = async (cb: Function) => {
         try {
             const { data, status }
-                : { data: Array<IMessage>, status: number | string } = await axios.get(`https://localhost:3001/api/Messages?friend=${friendUsername}&limits=${limitState}`, {
+                : { data: Array<IMessage>, status: number | string }
+                = await axios.get(`https://localhost:3001/api/Messages?username=harryguci&friend=${friendUsername}&limits=${limitState}`, {
                     headers: {
                         'accessToken': currentUsername
                     }

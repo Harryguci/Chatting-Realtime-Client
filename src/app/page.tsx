@@ -1,11 +1,15 @@
 "use client"
 import Link from "next/link";
 import { useEffect } from "react";
+import { redirect } from "next/navigation";
 
 export default function Home() {
   useEffect(() => {
     document.title = 'Home page';
-  }, [])
+  }, []);
+
+
+  useEffect(() => redirect('/chat'), []);
 
   return (
     <main>
