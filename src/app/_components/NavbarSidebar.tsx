@@ -40,7 +40,8 @@ export default function NavbarSidebar() {
                 </ul>
 
                 <div className="control-panel" style={{ marginBottom: '0', marginTop: 'auto' }}>
-                    <Link href={'/#logout'} className="btn">Logout</Link>
+                    <Link href={'/auth/login'} className="btn">Login</Link>
+                    <Link href={'/auth/signup'} className="btn">Sign Up</Link>
                 </div>
             </nav>
         </React.Fragment>

@@ -119,3 +119,10 @@ a {
     background: $blue-light;
     background: linear-gradient(100deg, $blue-light 0%, $blue 100%);
 }
+
+button.bg-primary-gradient,
+a.bg-primary-gradient {
+    &:hover {
+        background: linear-gradient(-45deg, $blue-light 0%, $blue 100%);
+    }
+}

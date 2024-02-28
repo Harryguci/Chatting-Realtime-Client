@@ -1,18 +1,85 @@
+"use client"
+
 import React from "react";
 import Link from "next/link";
-const Login: React.FunctionComponent<{
-    className: string | undefined,
-    style: object | undefined,
-    id: string | undefined
-}> = ({ }) => {
+import '../../_assets/scss/components/login/style.scss';
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faFacebookF, faTwitter, faTiktok } from '@fortawesome/free-brands-svg-icons';
 
+const Login: React.FunctionComponent = () => {
+    const [username, setUsername] = React.useState<string>("");
+    const [password, setPassword] = React.useState<string>("");
+    const [remember, setRemember] = React.useState<boolean>(false)
+    const styleSocialLink = {
+        display: 'flex',
+        background: '#8888ff',
+        aspectRatio: '1/1',
+        borderRadius: '5px',
+        width: '30px',
+        height: '30px',
+        justifyContent: 'center',
+        alignItems: 'center'
+    }
     return (
         <React.Fragment>
-            <h1>Login Page</h1>
-            <nav style={{ display: 'flex', gap: '1rem' }}>
-                <Link href="/auth/signup">Sign Up</Link>
-                <Link href="/chat">Home</Link>
-            </nav>
+            <div className="" style={{ height: '100vh', display: 'flex' }}>
+                <section className="sign-in" style={{ margin: 'auto' }}>
+                    <div className="container">
+                        <div className="signin-content">
+                            <div className="signin-image">
+                                <figure><img src="/signin-image.jpg" alt="sing up image" /></figure>
+                                <Link href="/auth/signup" className="signup-image-link btn bg-primary-gradient text-white">
+                                    Create an account
+                                </Link>
+                            </div>
+
+                            <div className="signin-form">
+                                <h2 className="form-title">Login</h2>
+                                <form method="POST" className="register-form" id="login-form">
+                                    <div className="form-group">
+                                        <label><i className="zmdi zmdi-account material-icons-name"></i></label>
+                                        <input type="text" name="your_name" id="your_name" placeholder="Your Name"
+                                            value={username} onChange={e => setUsername(e.target.value)} />
+                                    </div>
+                                    <div className="form-group">
+                                        <label><i className="zmdi zmdi-lock"></i></label>
+                                        <input type="password" name="your_pass" id="your_pass" placeholder="Password"
+                                            value={password} onChange={e => setPassword(e.target.value)} />
+                                    </div>
+                                    <div className="form-group">
+                                        <input type="checkbox" name="remember-me" id="remember-me" className="agree-term"
+                                            checked={remember} onChange={e => setRemember(e.target.checked)} />
+                                        <label className="label-agree-term"><span><span></span></span>Remember me</label>
+                                    </div>
+                                    <div className="form-group form-button">
+                                        <input type="submit" name="signin" id="signin" className="form-submit" value="Log in" />
+                                    </div>
+                                </form>
+                                <div className="social-login">
+                                    <span className="social-label">Or login with</span>
+                                    <ul className="socials">
+                                        <li>
+                                            <Link href="#" style={styleSocialLink}>
+                                                <FontAwesomeIcon className="text-white" icon={faFacebookF} />
+                                            </Link>
+                                        </li>
+                                        <li>
+                                            <Link href="#" style={{ ...styleSocialLink, background: '#0eeeff' }}>
+                                                <FontAwesomeIcon className="text-white" icon={faTwitter} />
+                                            </Link>
+                                        </li>
+                                        <li>
+                                            <Link href="#" style={{ ...styleSocialLink, background: '#666666' }}>
+                                                <FontAwesomeIcon className="text-white" icon={faTiktok} />
+                                            </Link>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
         </React.Fragment>
     )
 }
