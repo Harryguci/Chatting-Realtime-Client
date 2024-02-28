@@ -6,8 +6,8 @@
 
 $white-smoke: #f5f7f9;
 $white: #ffffff;
-$blue-light: #82a5e2;
-$blue: #598df0;
+$blue-light: #8db4f8;
+$blue: #447de7;
 $dark: #373938;
 $gray: #969696;
 
@@ -19,6 +19,10 @@ body {
 
     margin: 0;
     padding: 0;
+}
+
+html {
+    overflow: hidden;
 }
 
 ul,
@@ -45,6 +49,32 @@ a {
     font-weight: bold;
 }
 
+.text-white {
+    color: #ffffff !important;
+}
+
+.text-red {
+    color: red !important;
+}
+
+.text-blue {
+    color: darkblue;
+}
+
+.text-dark {
+    color: black;
+}
+
+.text-light-gray {
+    color: lightgray;
+}
+
+.center {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
 
 .btn {
     border: none;
@@ -60,4 +90,32 @@ a {
     border-radius: 3px;
     background: $white;
     box-shadow: 5px 5px 10rem rgba($color: #000000, $alpha: 0.1);
+}
+
+.form-control {
+    border: none;
+    outline: none;
+    border-bottom: 1px solid rgb(200, 200, 200);
+    font-size: 16px;
+
+    &:hover,
+    &:active,
+    &:focus {
+        border: none;
+        border-bottom: 1px solid rgb(200, 200, 200);
+        outline: none;
+    }
+}
+
+.bg-white-smoke {
+    background: $white-smoke;
+}
+
+.bg-white {
+    background: $white;
+}
+
+.bg-primary-gradient {
+    background: $blue-light;
+    background: linear-gradient(100deg, $blue-light 0%, $blue 100%);
 }

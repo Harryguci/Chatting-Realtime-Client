@@ -1,8 +1,12 @@
-import Image from "next/image";
-import styles from "./page.module.css";
+"use client"
 import Link from "next/link";
+import { useEffect } from "react";
 
 export default function Home() {
+  useEffect(() => {
+    document.title = 'Home page';
+  }, [])
+
   return (
     <main>
       <div className="d-flex" style={{ gap: '5px' }}>

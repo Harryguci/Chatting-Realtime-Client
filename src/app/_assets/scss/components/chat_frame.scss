@@ -3,9 +3,11 @@ $blue-white: #ffe8ff;
 
 .chat-frame {
     position: relative;
-    height: 100%;
+    height: calc(100vh - 50px);
     min-height: 10rem;
     max-height: 100%;
+    background: base.$white;
+    transition: all 0.3s ease-in-out;
 
     &__header {
         position: relative;
@@ -65,5 +67,57 @@ $blue-white: #ffe8ff;
         position: relative;
         height: 80%;
         min-height: 10rem;
+        background: base.$white;
+        overflow-y: auto;
+        overflow-x: hidden;
+        scroll-behavior: smooth;
+    }
+
+    &__control {
+        display: flex;
+
+        padding: 1rem 1rem 0 1rem;
+        width: 100%;
+        position: relative;
+        justify-content: space-around;
+
+        &::before {
+            content: '';
+            position: absolute;
+            width: calc(100% - 2rem);
+            height: 2px;
+            top: -2px;
+            left: 50%;
+            transform: translate(-50%, 0);
+            background: rgb(220, 220, 220);
+            box-shadow: 0 -5px 15px rgba($color: #0000ff, $alpha: 0.2);
+        }
+
+        .btn_circle {
+            padding: 12px !important;
+            background: rgb(130, 165, 226);
+            background: linear-gradient(50deg, base.$blue-light 0%, base.$blue 100%);
+            color: white;
+        }
+
+        &__left-action,
+        &__right-action {
+            display: flex;
+            gap: 2px;
+            width: max-content;
+            justify-content: center;
+        }
+
+        &__chat-container {
+            display: flex;
+            flex: 0 0 80%;
+            position: relative;
+
+            input {
+                display: block;
+                width: 100%;
+                height: 100%;
+            }
+        }
     }
 }

@@ -11,7 +11,7 @@ function BtnCircle({ onClick, className, id, type, children }: {
     type: 'button' | 'reset' | 'submit' | undefined,
     children: any
 }) {
-    const [classNameState] = useState(className ? 'btn btn_circle' + className : 'btn btn_circle');
+    const [classNameState] = useState(className ? 'btn btn_circle ' + className : 'btn btn_circle');
     return (
         <button
             id={id ? id : ''}

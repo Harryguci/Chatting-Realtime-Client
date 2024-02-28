@@ -1,6 +1,13 @@
+'use client'
+import { useEffect } from "react"
+
 export default function Template({ children }: { children: React.ReactNode }) {
-    return <div style={{ position: 'relative', height: '100%' }}>
-        {/* <p>Chat template</p> */}
+    
+    useEffect(() => {
+        document.title = 'Chat page';
+    }, []);
+
+    return <div style={{ position: 'relative', height: '100%', background: '#ffffff' }}>
         {children}
     </div>
 }

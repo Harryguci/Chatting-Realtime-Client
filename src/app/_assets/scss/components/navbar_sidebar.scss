@@ -1,12 +1,13 @@
 @use '../base';
 
 .navbar-sidebar {
-    background: base.$white;
+    background-color: base.$white;
     height: 100vh;
     flex: 0 0 20%;
     max-width: 300px;
     display: flex;
     flex-direction: column;
+    
     .user-info {
         position: relative;
         padding: 1rem;

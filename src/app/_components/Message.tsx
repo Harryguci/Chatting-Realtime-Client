@@ -2,7 +2,12 @@ import React from "react";
 import '../_assets/scss/components/message_component.scss';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCaretDown } from "@fortawesome/free-solid-svg-icons";
+function FormatTime(time: string): string {
+    let str = time;
+    str = str.replace('T', ' ').substring(0, 16);
 
+    return str;
+}
 function Message({ type, username, content, time }
     : {
         type: 'left' | 'right', username: String | undefined,
@@ -89,10 +94,11 @@ function Message({ type, username, content, time }
                     style={{ display: 'block', overflow: 'hidden' }}>
                     {username}
                 </small>
-                <p className="message-component__content">{content}</p>
+                <p className="message-component__content" dangerouslySetInnerHTML={{ __html: content ?? "" }} />
                 <small ref={timeElement}
                     style={{ display: 'block', overflow: 'hidden' }}>
-                    {time?.toLocaleString()}
+                    {/* {time?.toLocaleString()} */}
+                    {time ? FormatTime(time.toString()) : ''}
                 </small>
                 <button ref={showMoreBtn}
                     style={{ display: 'block', overflow: 'hidden', padding: '0' }}

@@ -6,7 +6,7 @@ export default function Chat() {
         <React.Fragment>
             <div className="chat-container"
                 style={{ position: 'relative', height: '100%' }}>
-                <ChatFrame style={{ marginTop: '3 rem' }} />
+                <ChatFrame style={undefined} />
             </div>
         </React.Fragment>
     )

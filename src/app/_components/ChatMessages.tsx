@@ -7,65 +7,48 @@ import Message from './Message'
 const ChatMessages: React.FunctionComponent<{
     friendUsername: string,
     currentUsername: string,
-    limits: number
-}> = ({ friendUsername, currentUsername, limits }) => {
-    const [messages, setMessages] = useState<Array<IMessage>>([
-        {
-            _id: '1',
-            username: 'harryguci',
-            time: new Date('2023-02-23'),
-            isSelf: true,
-            content: 'hello world'
-        },
-        {
-            _id: '2',
-            username: 'harryguci',
-            time: new Date('2023-02-23'),
-            isSelf: true,
-            content: 'hello world 2'
-        },
-        {
-            _id: '3',
-            username: 'ahp06',
-            time: new Date('2023-02-23'),
-            isSelf: true,
-            content: 'Đây là Ngọc Anh'
-        },
-        {
-            _id: '4',
-            username: 'ahp06',
-            time: new Date('2023-02-23'),
-            isSelf: true,
-            content: 'Have a nice day 😍'
-        },
-        {
-            _id: '5',
-            username: 'harryguci',
-            time: new Date('2023-02-23'),
-            isSelf: true,
-            content: 'Love u'
-        },
-        
-    ]);
-    const [limitState, setLimitState] = useState<number>(5);
+    limits: number,
+    setFetching: Function
+}> = ({ friendUsername, currentUsername, limits, setFetching }) => {
+    const [messages, setMessages] = useState<Array<IMessage>>([]);
+    const [limitState, setLimitState] = useState<number>(limits ? limits : 10);
+    const [isRemain, setIsRemain] = useState<boolean>(true);
 
-    // Fetch data
-    const getMessage = async () => {
-        // Will re-write with the WebSocket Protocol.
+    // Get the messages data
+    const getMessage = async (cb: Function) => {
         try {
-            const { data, status } = await axios.get('http://localhost:3001/messages', {
-                headers: {
-                    Accept: 'application/json',
-                },
-            });
-            console.log(JSON.stringify(data));
+            const { data, status }
+                : { data: Array<IMessage>, status: number | string } = await axios.get(`https://localhost:3001/api/Messages?friend=${friendUsername}&limits=${limitState}`, {
+                    headers: {
+                        'accessToken': currentUsername
+                    }
+                });
+
+            setMessages(data);
+
+            if (data.length >= limitState) {
+                setFetching((prev: Boolean) => prev ? !prev : prev);
+            }
+            else
+                setIsRemain(false);
         } catch (error) {
-            // console.error(error);
+            window.alert(error);
         }
+
+        return cb();
     }
 
     useEffect(() => {
-        getMessage();
+        if (isRemain)
+            setLimitState(limits);
+    }, [limits]);
+
+    useEffect(() => {
+        console.log(`[Update Messages with limits = ${limits}]`);
+        getMessage(() => {
+            console.log('[DONE GET MESSAGE]');
+        });
+
     }, [limitState]);
 
     return (
@@ -78,7 +61,10 @@ const ChatMessages: React.FunctionComponent<{
                             type={mess.username === friendUsername ? "left" : 'right'}
                             username={mess.username}
                             content={mess.content}
-                            time={mess.time} />)
+                            time={mess.createAt} />)
+                )}
+                {messages?.length === 0 && (
+                    <p className="center">Loading...</p>
                 )}
             </div>
         </div>
