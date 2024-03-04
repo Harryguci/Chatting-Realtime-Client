@@ -1,6 +1,4 @@
-'use client'
-
-import React, { useEffect, useState } from "react";
+import React, { memo, useEffect, useState } from "react";
 import axios from 'axios';
 import IMessage from "../_interfaces/IMessage";
 import Message from './Message'
@@ -8,18 +6,37 @@ const ChatMessages: React.FunctionComponent<{
     friendUsername: string,
     currentUsername: string,
     limits: number,
-    setFetching: Function
+    setFetching: Function,
 }> = ({ friendUsername, currentUsername, limits, setFetching }) => {
     const [messages, setMessages] = useState<Array<IMessage>>([]);
-    const [limitState, setLimitState] = useState<number>(limits ? limits : 10);
-    const [isRemain, setIsRemain] = useState<boolean>(true);
+    // const [isRemainState, setIsRemainState] = useState<boolean>(true);
+    const [isLoading, setIsLoading] = useState<boolean>(true);
+    const LoadingElement = React.useRef<HTMLDivElement>(null);
 
     // Get the messages data
+    const Loading = React.useCallback(() => {
+        return (
+            <div className="loading"
+                style={{
+                    position: 'relative',
+                    top: 10 + 'px',
+                    left: 10 + 'px',
+                    fontSize: '2rem',
+                    overflow: 'hidden',
+                    maxHeight: (isLoading ? 'auto' : '0'),
+                    transition: 'all 0.5s ease-in-out'
+                }}>
+                Loading...
+            </div>
+        )
+    }, [isLoading])
     const getMessage = async (cb: Function) => {
         try {
+            console.log('[Get Message]');
+
             const { data, status }
                 : { data: Array<IMessage>, status: number | string }
-                = await axios.get(`https://localhost:3001/api/Messages?username=harryguci&friend=${friendUsername}&limits=${limitState}`, {
+                = await axios.get(`https://localhost:3001/api/Messages?username=harryguci&friend=${friendUsername}&limits=${limits}`, {
                     headers: {
                         'accessToken': currentUsername
                     }
@@ -27,11 +44,10 @@ const ChatMessages: React.FunctionComponent<{
 
             setMessages(data);
 
-            if (data.length >= limitState) {
+            if (data.length >= limits) {
                 setFetching((prev: Boolean) => prev ? !prev : prev);
             }
-            else
-                setIsRemain(false);
+
         } catch (error) {
             window.alert(error);
         }
@@ -40,21 +56,30 @@ const ChatMessages: React.FunctionComponent<{
     }
 
     useEffect(() => {
-        if (isRemain)
-            setLimitState(limits);
+        console.log('[Set Loading True]');
+        
+        setIsLoading(true);
+        getMessage(() => {
+            console.log('[Set Loading False]');
+            setIsLoading(false);
+        });
     }, [limits]);
 
     useEffect(() => {
-        console.log(`[Update Messages with limits = ${limits}]`);
-        getMessage(() => {
-            console.log('[DONE GET MESSAGE]');
-        });
-
-    }, [limitState]);
+        if (LoadingElement && LoadingElement.current) {
+            LoadingElement.current.style.maxHeight = isLoading ? '200px' : '0px';
+        }
+    }, [isLoading, LoadingElement])
 
     return (
         <div>
-            <div className="chat-message">
+            <div className="chat-message" style={{ position: 'relative' }}>
+                <p ref={LoadingElement} style={{
+                    fontSize: '5rem',
+                    overflow: 'hidden',
+                    display: 'block',
+                    transition: 'all 1s ease-in-out'
+                }}>Loading...</p>
                 {messages?.length > 0 && (
                     messages.map((mess: IMessage, index: number) =>
                         <Message
@@ -64,12 +89,9 @@ const ChatMessages: React.FunctionComponent<{
                             content={mess.content}
                             time={mess.createAt} />)
                 )}
-                {messages?.length === 0 && (
-                    <p className="center">Loading...</p>
-                )}
             </div>
         </div>
     );
 }
 
-export default ChatMessages;
+export default memo(ChatMessages);

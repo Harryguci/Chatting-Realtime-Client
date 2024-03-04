@@ -1,10 +1,12 @@
 "use client"
 
-import React from "react";
+import React, { FormEvent } from "react";
 import Link from "next/link";
 import '../../_assets/scss/components/login/style.scss';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faFacebookF, faTwitter, faTiktok } from '@fortawesome/free-brands-svg-icons';
+import axios from "axios";
+import { redirect } from "next/navigation";
 
 const Login: React.FunctionComponent = () => {
     const [username, setUsername] = React.useState<string>("");
@@ -19,6 +21,32 @@ const Login: React.FunctionComponent = () => {
         height: '30px',
         justifyContent: 'center',
         alignItems: 'center'
+    }
+    const handleSubmit = async (e: FormEvent) => {
+        e.preventDefault();
+        const { data, status } = await axios.post('https://localhost:3001/api/auth/login', {
+            username, password
+        }, {
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json',
+            }
+        });
+
+        if (status === 200) {
+            let token: string | undefined = data.accessToken;
+            console.log('token', token);
+
+            if (!token) return window.alert('Can not get the token');
+            localStorage.setItem('accessToken', token);
+            sessionStorage.setItem('accessToken', token);
+
+            redirect("/chat");
+        }
+
+        if (data.error) {
+            window.alert(data.error)
+        }
     }
     return (
         <React.Fragment>
@@ -35,7 +63,7 @@ const Login: React.FunctionComponent = () => {
 
                             <div className="signin-form">
                                 <h2 className="form-title">Login</h2>
-                                <form method="POST" className="register-form" id="login-form">
+                                <form method="POST" className="register-form" id="login-form" onSubmit={handleSubmit}>
                                     <div className="form-group">
                                         <label><i className="zmdi zmdi-account material-icons-name"></i></label>
                                         <input type="text" name="your_name" id="your_name" placeholder="Your Name"

@@ -10,9 +10,9 @@ function FormatTime(time: string): string {
 }
 function Message({ type, username, content, time }
     : {
-        type: 'left' | 'right', username: String | undefined,
-        content: String | undefined,
-        time: Date | undefined,
+        type: 'left' | 'right', username: string | undefined,
+        content: string | undefined,
+        time: string | Date | undefined,
     }): React.ReactElement {
 
     const [className, setClassName] = React.useState(['card', 'message-component'])

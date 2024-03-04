@@ -1,24 +1,47 @@
 "use client"
 
-import React from "react";
+import React, { FormEvent, FormEventHandler } from "react";
 import Link from "next/link";
 import '../../_assets/scss/components/login/style.scss';
+import axios from "axios";
+import { redirect } from "next/navigation";
 const SignUp: React.FunctionComponent = () => {
     const [username, setUsername] = React.useState<string>("");
     const [email, setEmail] = React.useState<string>("");
     const [password, setPassword] = React.useState<string>("");
     const [repassword, setRePassword] = React.useState<string>("");
     const [agree, setAgree] = React.useState<boolean>(false);
+    const handleSubmit = async (e: FormEvent) => {
+        e.preventDefault();
 
+        const { data, status } = await axios.post('https://localhost:3001/api/auth/signup', {
+            username, password, email, roles: "user"
+        }, {
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json',
+            }
+        });
+        if (status === 200) {
+            window.alert('Sign Up sucessfully');
+            redirect('/auth/login')
+        }
+        if (data.error) {
+            window.alert(data.error);
+        }
+    }
     return (
         <React.Fragment>
-            <div className="" style={{ height: '100vh', display: 'flex' }}>
+            <div className="" style={{
+                height: '100vh',
+                display: 'flex'
+            }}>
                 <section className="signup" style={{ margin: 'auto' }}>
                     <div className="container">
                         <div className="signup-content">
                             <div className="signup-form">
                                 <h2 className="form-title">Sign up</h2>
-                                <form method="POST" className="register-form" id="register-form">
+                                <form method="POST" className="register-form" id="register-form" onSubmit={handleSubmit}>
                                     <div className="form-group">
                                         <label htmlFor="name"><i className="zmdi zmdi-account material-icons-name"></i></label>
                                         <input type="text" name="name" id="name" placeholder="Your Name"

@@ -1,5 +1,4 @@
-import { MouseEventHandler } from "react"; }
-
+import { MouseEventHandler } from "react";
 export default interface IBtnCircle {
     onClick: MouseEventHandler | undefined,
     className: string | undefined,
