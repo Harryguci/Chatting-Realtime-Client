@@ -24,7 +24,13 @@ function SearchBox({ style, searchText, setSearchText }:
                         placeholder="Search"
                         value={searchText} onChange={e => setSearchText(e.target.value)} />
                 </div>
-                <button className="btn" style={{ width: '30%', display: 'flex', alignItems: 'center', gap: '5px' }}>
+                <button className="btn" style={{
+                    width: '30%',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '5px',
+                    boxShadow: '-5px 0 5px rgba(0,0,0,0.02)'
+                }}>
                     <FontAwesomeIcon icon={faAngleDown} />{" "}Messages
                 </button>
             </form>

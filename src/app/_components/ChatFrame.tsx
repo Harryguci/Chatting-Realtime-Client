@@ -48,11 +48,19 @@ const ChatFrame: React.FunctionComponent<{ style: object | undefined }> = ({ sty
         if (e) e.preventDefault();
         if (wsConnection) {
             if (isHTML(messageContent)) {
-                return window.alert(`${messageContent} is invalid`);
+                // return window.alert(`${messageContent} is invalid`);
+                return swal('The content is contain HTML syntax', {
+                    title: 'Error',
+                    //@ts-ignore
+                    buttons: {
+                        Ok: 'Ok',
+                    },
+                    icon: 'error'
+                });
             } else {
                 wsConnection.current?.send(JSON.stringify({
-                    id: 'harryguci_ngocanh_',
-                    username: 'harryguci',
+                    id: '',
+                    username: userData?.username,
                     roomId: 'room1',
                     content: messageContent,
                     createAT: null
@@ -61,8 +69,8 @@ const ChatFrame: React.FunctionComponent<{ style: object | undefined }> = ({ sty
         }
 
         const { data, status } = await axios.post('https://localhost:3001/api/Messages', {
-            id: 'harryguci_ngocanh_',
-            username: 'harryguci',
+            id: '',
+            username: userData?.username,
             roomId: 'room1',
             content: messageContent,
             createAT: null
