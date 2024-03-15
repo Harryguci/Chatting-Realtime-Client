@@ -1,13 +1,13 @@
 'use client'
 
-import React, { MouseEventHandler, useContext, useDebugValue, useEffect, useLayoutEffect } from "react";
+import { Fragment, useContext, useEffect, useLayoutEffect, useRef, useState } from "react";
+import swal from "sweetalert";
 import Link from "next/link";
 import '../_assets/scss/components/navbar_sidebar.scss';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faArrowDown } from '@fortawesome/free-solid-svg-icons'
+import { faArrowDown, faRightFromBracket } from '@fortawesome/free-solid-svg-icons'
 import { usePathname } from "next/navigation";
 import { GlobalContext } from "../Context/store";
-import swal from "sweetalert";
 import { useRouter } from "next/navigation";
 
 interface NavbarItem {
@@ -21,8 +21,8 @@ export default function NavbarSidebar() {
     const router = useRouter();
 
     const pathname: string | null = usePathname();
-    const navSlider = React.useRef<HTMLLIElement>(null);
-    const [navState, setNavState] = React.useState<Array<NavbarItem>>([
+    const navSlider = useRef<HTMLLIElement>(null);
+    const [navState, setNavState] = useState<Array<NavbarItem>>([
         {
             href: '/',
             children: <Link href='/'>Home</Link>,
@@ -52,13 +52,7 @@ export default function NavbarSidebar() {
             },
         }
     ]);
-
-    const navElement = React.useRef<HTMLUListElement>(null);
-
-    useEffect(() => {
-        console.log(userData);
-
-    }, [userData])
+    const navElement = useRef<HTMLUListElement>(null);
 
     useLayoutEffect(() => {
         let indexCurrent = -1;
@@ -84,7 +78,6 @@ export default function NavbarSidebar() {
 
             if (style) {
                 navSlider.current.style.height = style.height;
-                console.log(`set navslider's height = ${style.height}px`);
             }
         }
 
@@ -105,29 +98,40 @@ export default function NavbarSidebar() {
     }, [pathname]);
 
     const handleLogout = (event: any) => {
-        swal({
-            title: "Are you sure want to Logout?",
-            text: "Bạn có muốn đăng xuất tài khoản này.",
-            icon: "warning",
-            buttons: true,
+        swal("Are you sure to want to Logout?", {
+            icon: 'warning',
+            // @ts-ignore
+            buttons: {
+                cancel: "Hủy",
+                accept: "Ok",
+            },
             dangerMode: true,
         })
-            .then((willDelete) => {
-                if (willDelete) {
-                    localStorage.removeItem('accessToken');
-                    sessionStorage.removeItem('accessToken');
-                    setUserData({
-                        username: '',
-                        roles: '',
-                        email: ''
-                    })
-                    router.push('/auth/login')
+            .then((value) => {
+                switch (value) {
+                    case "accept":
+                        localStorage.removeItem('accessToken');
+                        sessionStorage.removeItem('accessToken');
+                        localStorage.removeItem('currentUser');
+                        sessionStorage.removeItem('currentUser');
+                        setUserData({
+                            username: '',
+                            roles: '',
+                            email: ''
+                        })
+                        router.push('/auth/login')
+                        break;
+
+                    case "cancel":
+                        break;
+
+                    default:
                 }
             });
     }
 
     return (
-        <React.Fragment>
+        <Fragment>
             {pathname && !['/auth/login', '/auth/signup'].includes(pathname) &&
                 <nav className="navbar-sidebar">
                     <div className="user-info">
@@ -162,9 +166,13 @@ export default function NavbarSidebar() {
                             </>
                         )}
 
-                        {userData && <button className="btn" onClick={handleLogout}>Logout</button>}
+                        {userData && <button className="btn"
+                            style={{ display: 'flex', alignItems: 'center', gap: '10px' }}
+                            onClick={handleLogout}>
+                            <FontAwesomeIcon icon={faRightFromBracket} />{" "}Logout
+                        </button>}
                     </div>
                 </nav>}
-        </React.Fragment>
+        </Fragment>
     )
 }

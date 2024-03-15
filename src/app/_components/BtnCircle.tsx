@@ -1,6 +1,6 @@
 'use client'
 
-import { MouseEventHandler, ReactNode, memo, useState } from "react";
+import { MouseEventHandler, memo, useState } from "react";
 import '../_assets/scss/components/btn_circle.scss';
 import IBtnCircle from "../_interfaces/IButtonCircle";;
 
@@ -12,7 +12,7 @@ function BtnCircle({ onClick, className, id, type, children, ref }: {
     children: any,
     ref: any
 }) {
-    const [classNameState] = useState(className ? 'btn btn_circle ' + className : 'btn btn_circle');
+    const [classNameState] = useState<string>(className ? 'btn btn_circle ' + className : 'btn btn_circle');
     return (
         <button
             ref={ref}

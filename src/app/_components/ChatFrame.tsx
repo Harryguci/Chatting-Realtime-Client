@@ -11,7 +11,6 @@ import ChatMessages from "./ChatMessages";
 import isHTML from "../_helper/isHtml";
 import swal from 'sweetalert';
 import IMessage from "../_interfaces/IMessage";
-import IAccount from "../_interfaces/IAccount";
 import { useRouter } from "next/navigation";
 import { GlobalContext } from "../Context/store";
 
@@ -38,7 +37,10 @@ const ChatFrame: React.FunctionComponent<{ style: object | undefined }> = ({ sty
     const [limit, setLimit] = useState(15);
     const [isRequireRefreshData, setIsRequireRefreshData] = useState(true);
 
+    const chatFrameRef = useRef<HTMLDivElement | null>(null);
     const chatFrameMain = useRef<HTMLDivElement | null>(null);
+    const chatFrameHeader = useRef<HTMLDivElement | null>(null);
+    const chatFrameControl = useRef<HTMLDivElement | null>(null);
     const formElement = useRef<HTMLFormElement>(null);
     const wsConnection = useRef<WebSocket | null>(null);
 
@@ -69,7 +71,7 @@ const ChatFrame: React.FunctionComponent<{ style: object | undefined }> = ({ sty
         setMessageContent("");
     }
 
-    const GetNumberOfMessage = async () => {
+    const getNumberOfMessage = async () => {
         const accessToken = sessionStorage.getItem('accessToken') || localStorage.getItem('accessToken');
 
         const { data, status } =
@@ -83,7 +85,7 @@ const ChatFrame: React.FunctionComponent<{ style: object | undefined }> = ({ sty
         return data.count;
     }
 
-    const GetMessage = async (cb: Function) => {
+    const getMessage = async (cb: Function | undefined | null) => {
         try {
             const accessToken = sessionStorage.getItem('accessToken') || localStorage.getItem('accessToken');
 
@@ -121,12 +123,12 @@ const ChatFrame: React.FunctionComponent<{ style: object | undefined }> = ({ sty
             }
         }
 
-        return cb();
+        return cb && cb();
     }
 
     useEffect(() => {
-        GetNumberOfMessage();
-        GetMessage(() => console.log("Get Message Successfully!!"));
+        getNumberOfMessage();
+        getMessage(null);
     }, []);
 
     useLayoutEffect(() => {
@@ -155,7 +157,7 @@ const ChatFrame: React.FunctionComponent<{ style: object | undefined }> = ({ sty
 
     // WebSocket Configuration:
     useEffect(() => {
-        var token = sessionStorage.getItem('accessToken') || localStorage.getItem('accessToken');
+        const token = sessionStorage.getItem('accessToken') || localStorage.getItem('accessToken');
 
         const webSocket = new WebSocket(`wss://localhost:3001/ws?token=${token}`);
 
@@ -205,13 +207,33 @@ const ChatFrame: React.FunctionComponent<{ style: object | undefined }> = ({ sty
         chatFrameMain.current?.scrollTo(0, chatFrameMain.current.clientHeight);
     }, [messages])
 
+    useLayoutEffect(() => {
+        const handler = (event: any) => {
+            if (chatFrameMain && chatFrameMain.current)
+                chatFrameMain.current.style.height = (chatFrameRef.current?.clientHeight ?? 0)
+                    - (chatFrameHeader.current?.offsetHeight ?? 0)
+                    - (chatFrameControl.current?.offsetHeight ?? 0) + 'px';
+        }
+
+
+        handler(null);
+
+        window.onresize = handler;
+        window.onload = handler;
+
+        return () => {
+            window.onresize = () => { }
+            window.onload = () => { }
+        }
+    }, [chatFrameMain])
+
     return (
         <React.Fragment>
-            <div className="card chat-frame" style={style ?? style}>
-                <div className="chat-frame__header">
+            <div className="card chat-frame" ref={chatFrameRef} style={style ?? style}>
+                <div className="chat-frame__header" ref={chatFrameHeader}>
                     <div className="chat-frame__header__user">
                         <div className="chat-frame__header__user__avatar">
-                            <img src="https://th.bing.com/th/id/R.1af6278b2f245eff29006e6b351de3a5?rik=WTJmHheK8s9BgA&riu=http%3a%2f%2f3.bp.blogspot.com%2f-JR6q_p0lRIc%2fUTop3JjaOXI%2fAAAAAAAAA0w%2f4hho4JbJc70%2fs1600%2fcats-art-prints.gif&ehk=Pb9b3kn7k0p6fY12uhAPsvnw9HKdfXA4umk5FmlPUUA%3d&risl=&pid=ImgRaw&r=0"
+                            <img src="cat-avatar.gif"
                                 alt="username" />
                         </div>
                         <div className="chat-frame__header__user__info">
@@ -239,12 +261,12 @@ const ChatFrame: React.FunctionComponent<{ style: object | undefined }> = ({ sty
                 <div className="chat-frame__main" ref={chatFrameMain}>
                     <ChatMessages
                         friendUsername="ngocanh"
-                        currentUsername="harryguci" limits={limit}
+                        currentUsername={userData?.username || ""} limits={limit}
                         setFetching={setIsRequireRefreshData}
                         messages={messages}
                         setMessages={setMessages} />
                 </div>
-                <div className="chat-frame__control">
+                <div className="chat-frame__control" ref={chatFrameControl}>
                     <div className="chat-frame__control__left-action">
                         <BtnCircle
                             id={'chat-frame__control__left-action__more-btn'}

@@ -3,10 +3,13 @@
 import React from "react";
 import Link from "next/link";
 import '../../_assets/scss/components/login/style.scss';
-import axios from "axios";
-import { redirect } from "next/navigation";
+import axios, { AxiosError } from "axios";
+import { useRouter } from "next/navigation";
+import swal from "sweetalert";
 
 const SignUp: React.FunctionComponent = () => {
+    const router = useRouter();
+
     const [username, setUsername] = React.useState<string>("");
     const [email, setEmail] = React.useState<string>("");
     const [password, setPassword] = React.useState<string>("");
@@ -15,20 +18,33 @@ const SignUp: React.FunctionComponent = () => {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
 
-        const { data, status } = await axios.post('https://localhost:3001/api/auth/signup', {
-            username, password, email, roles: "user"
+        //@ts-ignore
+        const { data, status }: { status: number } = await axios.post('https://localhost:3001/api/auth/signup', {
+            id: '', username, password, email, roles: "user"
         }, {
             headers: {
                 'Content-Type': 'application/json',
                 'Accept': 'application/json',
             }
-        });
+        }).then(response => response)
+            .catch((error: any) => {
+                var mess = error.response?.data.error || error.message;
+                swal({
+                    title: "Error!",
+                    text: mess,
+                    icon: "error",
+                    buttons: ["Try again!"],
+                });
+            });
+
         if (status === 200) {
-            window.alert('Sign Up sucessfully');
-            redirect('/auth/login')
-        }
-        if (data.error) {
-            window.alert(data.error);
+            swal({
+                title: "Success!",
+                text: 'Sign Up sucessfully',
+                icon: "success",
+                buttons: ["Try again!"],
+            });
+            router.push('/auth/login')
         }
     }
     return (

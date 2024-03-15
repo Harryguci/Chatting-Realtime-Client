@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, createContext, useContext, Dispatch, SetStateAction, ReactNode, FunctionComponent, useEffect } from "react";
+import { useState, createContext, Dispatch, SetStateAction, ReactNode, useEffect, useMemo } from "react";
 
 export type DataType = {
     username: string,
@@ -23,10 +23,33 @@ export const GlobalContext = createContext<ContextProps>({
 })
 
 export const GlobalContextProvider: any = ({ children }: { children: ReactNode }) => {
-    const persistentUserData = localStorage.getItem('currentUser');
-
     const [userId, setUserId] = useState<string>("");
-    const [data, setData] = useState<DataType | undefined>(persistentUserData ? JSON.parse(persistentUserData) : undefined);
+    const [data, setData] = useState<DataType | undefined>();
+
+    const persistentUserData = useMemo((): string | null => {
+        if (typeof window !== 'undefined') {
+            var obj = JSON.parse(localStorage.getItem('currentUser') ?? "{}");
+            console.log(localStorage.getItem('currentUser'));
+
+            return JSON.stringify({
+                username: obj.username,
+                roles: obj.roles,
+                email: obj.email
+            });
+        }
+        else return JSON.stringify({
+            username: '',
+            roles: '',
+            email: ''
+        });
+    }, []);
+
+    useEffect(() => {
+        const raw = persistentUserData;
+        if (raw) setData(JSON.parse(raw))
+    }, [])
+
+
 
     return (
         <GlobalContext.Provider value={{ userId, setUserId, data, setData }}>

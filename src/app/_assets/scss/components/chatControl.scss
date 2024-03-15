@@ -1,0 +1,11 @@
+@use '../base';
+
+.chat-control-panel {
+    padding: 3rem 2rem 1rem 2rem;
+    margin: 0;
+    background: base.$white-smoke;
+    &__head {
+        display: flex;
+        justify-content: space-between;
+    }
+}

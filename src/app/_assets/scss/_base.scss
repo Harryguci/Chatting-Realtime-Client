@@ -118,6 +118,7 @@ a {
 .bg-primary-gradient {
     background: $blue-light;
     background: linear-gradient(100deg, $blue-light 0%, $blue 100%);
+    color: white;
 }
 
 button.bg-primary-gradient,
@@ -126,3 +127,12 @@ a.bg-primary-gradient {
         background: linear-gradient(-45deg, $blue-light 0%, $blue 100%);
     }
 }
+
+.rounded-1 {
+    border-radius: 5px;
+}
+
+.box-shadow-1 {
+    box-shadow: 3px 3px 15px rgba($color: #000000, $alpha: 0.1);
+}
+
