@@ -1,9 +1,9 @@
 "use client"
 import Link from "next/link";
-import { useEffect } from "react";
+import React from "react";
 
 export default function Home() {
-  useEffect(() => {
+  React.useEffect(() => {
     document.title = 'Home page';
   }, []);
 

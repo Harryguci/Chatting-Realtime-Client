@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import './_assets/scss/style.scss';
 import NavbarSidebar from "./_components/NavbarSidebar";
+import { GlobalContextProvider } from "./Context/store";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
@@ -16,14 +17,16 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={inter.className}>
-        <div className="app d-flex">
-          <NavbarSidebar />
-          <main className="content" style={{ width: '100%' }}>
-            {children}
-          </main>
-        </div>
-      </body>
+      <GlobalContextProvider>
+        <body className={inter.className}>
+          <div className="app d-flex">
+            <NavbarSidebar />
+            <main className="content" style={{ width: '100%' }}>
+              {children}
+            </main>
+          </div>
+        </body>
+      </GlobalContextProvider>
     </html>
   );
 }

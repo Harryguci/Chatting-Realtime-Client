@@ -1,17 +1,25 @@
 "use client"
 
-import React, { FormEvent } from "react";
+import { Fragment, useState, Dispatch, SetStateAction, useContext } from "react";
+import swal from "sweetalert";
+import axios from "axios";
 import Link from "next/link";
 import '../../_assets/scss/components/login/style.scss';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faFacebookF, faTwitter, faTiktok } from '@fortawesome/free-brands-svg-icons';
-import axios from "axios";
-import { redirect } from "next/navigation";
+import { useRouter } from 'next/navigation'
+import { DataType, GlobalContext } from "@/app/Context/store";
 
 const Login: React.FunctionComponent = () => {
-    const [username, setUsername] = React.useState<string>("");
-    const [password, setPassword] = React.useState<string>("");
-    const [remember, setRemember] = React.useState<boolean>(false)
+    const { setData }: {
+        setData:
+        Dispatch<SetStateAction<DataType | undefined>>
+    } = useContext(GlobalContext);
+
+    const [username, setUsername] = useState<string>("");
+    const [password, setPassword] = useState<string>("");
+    const [remember, setRemember] = useState<boolean>(false)
+
     const styleSocialLink = {
         display: 'flex',
         background: '#8888ff',
@@ -22,34 +30,53 @@ const Login: React.FunctionComponent = () => {
         justifyContent: 'center',
         alignItems: 'center'
     }
-    const handleSubmit = async (e: FormEvent) => {
+    const router = useRouter()
+
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        const { data, status } = await axios.post('https://localhost:3001/api/auth/login', {
+        const data = await axios.post('https://localhost:3001/api/auth/login', {
             username, password
         }, {
             headers: {
                 'Content-Type': 'application/json',
                 'Accept': 'application/json',
             }
-        });
+        }).then(response => response.data)
+            .then(data => {
+                let token: string | undefined = data.token;
+                console.log('token', token);
 
-        if (status === 200) {
-            let token: string | undefined = data.accessToken;
-            console.log('token', token);
+                if (!token) return window.alert('Can not get the token');
+                localStorage.setItem('accessToken', token);
+                sessionStorage.setItem('accessToken', token);
 
-            if (!token) return window.alert('Can not get the token');
-            localStorage.setItem('accessToken', token);
-            sessionStorage.setItem('accessToken', token);
+                const user = {
+                    username: username,
+                    roles: 'user',
+                    email: ''
+                }
 
-            redirect("/chat");
-        }
+                localStorage.setItem('currentUser', JSON.stringify(user));
+                sessionStorage.setItem('currentUser', JSON.stringify(user));
 
-        if (data.error) {
-            window.alert(data.error)
-        }
+                setData(user)
+
+                return data;
+            }).catch(error => {
+                console.log(JSON.stringify(error))
+
+                swal({
+                    title: "Error!",
+                    text: error.message,
+                    icon: "error",
+                    buttons: ["Try again!"],
+                });
+            });
+
+        if (data) router.push("/chat")
     }
     return (
-        <React.Fragment>
+        <Fragment>
             <div className="" style={{ height: '100vh', display: 'flex' }}>
                 <section className="sign-in" style={{ margin: 'auto' }}>
                     <div className="container">
@@ -108,7 +135,7 @@ const Login: React.FunctionComponent = () => {
                     </div>
                 </section>
             </div>
-        </React.Fragment>
+        </Fragment>
     )
 }
 

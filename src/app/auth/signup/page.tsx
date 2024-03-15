@@ -1,17 +1,18 @@
 "use client"
 
-import React, { FormEvent, FormEventHandler } from "react";
+import React from "react";
 import Link from "next/link";
 import '../../_assets/scss/components/login/style.scss';
 import axios from "axios";
 import { redirect } from "next/navigation";
+
 const SignUp: React.FunctionComponent = () => {
     const [username, setUsername] = React.useState<string>("");
     const [email, setEmail] = React.useState<string>("");
     const [password, setPassword] = React.useState<string>("");
     const [repassword, setRePassword] = React.useState<string>("");
     const [agree, setAgree] = React.useState<boolean>(false);
-    const handleSubmit = async (e: FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
 
         const { data, status } = await axios.post('https://localhost:3001/api/auth/signup', {

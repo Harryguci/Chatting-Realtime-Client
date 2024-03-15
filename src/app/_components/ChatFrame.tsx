@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
+import React, { useCallback, useContext, useEffect, useLayoutEffect, useRef, useState } from "react";
 import axios from "axios";
 import '../_assets/scss/components/chat_frame.scss';
 import Link from "next/link";
@@ -9,17 +9,30 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faFaceSmile, faPaperPlane, faPhone, faPlus, faVideo } from "@fortawesome/free-solid-svg-icons";
 import ChatMessages from "./ChatMessages";
 import isHTML from "../_helper/isHtml";
+import swal from 'sweetalert';
+import IMessage from "../_interfaces/IMessage";
+import IAccount from "../_interfaces/IAccount";
+import { useRouter } from "next/navigation";
+import { GlobalContext } from "../Context/store";
 
 const ChatFrame: React.FunctionComponent<{ style: object | undefined }> = ({ style }) => {
+    const router = useRouter();
+    const { data: userData } = useContext(GlobalContext);
+
     const handleClickCall = useCallback(() => {
-        // window.alert('call btn is clicked');
+        swal({
+            title: "Good job!",
+            text: "You clicked the button!",
+            icon: "error",
+            buttons: ["Aww yiss!"],
+        });
     }, []);
 
-    const [currentUsername, setCurrentUsername] = useState('harryguci');
-    const [friendUsername, setFriendUsername] = useState('ngocanh');
     const [maxSize, setMaxSize] = useState<number | null>(null);
 
     const [enableScroll, setEnableScroll] = useState(false);
+
+    const [messages, setMessages] = useState<Array<IMessage>>([]);
 
     const [messageContent, setMessageContent] = useState("")
     const [limit, setLimit] = useState(15);
@@ -34,41 +47,86 @@ const ChatFrame: React.FunctionComponent<{ style: object | undefined }> = ({ sty
         if (wsConnection) {
             if (isHTML(messageContent)) {
                 return window.alert(`${messageContent} is invalid`);
-            } else
+            } else {
                 wsConnection.current?.send(JSON.stringify({
                     id: 'harryguci_ngocanh_',
                     username: 'harryguci',
-                    friendUsername: 'ngocanh',
+                    roomId: 'room1',
                     content: messageContent,
                     createAT: null
                 }));
+            }
         }
 
         const { data, status } = await axios.post('https://localhost:3001/api/Messages', {
             id: 'harryguci_ngocanh_',
             username: 'harryguci',
-            friendUsername: 'ngocanh',
+            roomId: 'room1',
             content: messageContent,
             createAT: null
         });
 
-        if (data) {
-            sessionStorage.setItem('update-message', 'true');
-            setLimit(prev => prev + 1)
-            setMessageContent('')
-            setIsRequireRefreshData(true);
-        }
+        setMessageContent("");
     }
 
     const GetNumberOfMessage = async () => {
+        const accessToken = sessionStorage.getItem('accessToken') || localStorage.getItem('accessToken');
+
         const { data, status } =
-            await axios.get(`https://localhost:3001/api/Messages/Count?username=${currentUsername}&friend=${friendUsername}`);
+            await axios.get(`https://localhost:3001/api/Messages/Count?roomId=room1`, {
+                headers: {
+                    'Authorization': `Bearer ${accessToken}`
+                }
+            });
+
         setMaxSize(data.count);
         return data.count;
     }
 
+    const GetMessage = async (cb: Function) => {
+        try {
+            const accessToken = sessionStorage.getItem('accessToken') || localStorage.getItem('accessToken');
+
+            const { data, status }
+                : { data: Array<IMessage>, status: number | string }
+                = await axios.get(`https://localhost:3001/api/Messages/RoomId/room1`, {
+                    headers: {
+                        'Authorization': `Bearer ${accessToken}`
+                    }
+                });
+
+            setMessages(data);
+
+            if (data.length >= limit) {
+                setIsRequireRefreshData((prev: Boolean) => prev ? !prev : prev);
+            }
+
+        } catch (error: any) {
+            if (error.response.status === 401) {
+                swal({
+                    title: "Error!",
+                    text: 'Bạn phải đăng nhập để xem',
+                    icon: "error",
+                    buttons: ["Try later!"],
+                });
+
+                router.push('/auth/login')
+            } else {
+                swal({
+                    title: "Error!",
+                    text: error.message,
+                    icon: "error",
+                    buttons: ["Try later!"],
+                });
+            }
+        }
+
+        return cb();
+    }
+
     useEffect(() => {
         GetNumberOfMessage();
+        GetMessage(() => console.log("Get Message Successfully!!"));
     }, []);
 
     useLayoutEffect(() => {
@@ -97,22 +155,55 @@ const ChatFrame: React.FunctionComponent<{ style: object | undefined }> = ({ sty
 
     // WebSocket Configuration:
     useEffect(() => {
-        const webSocket = new WebSocket('wss://localhost:3001/ws');
+        var token = sessionStorage.getItem('accessToken') || localStorage.getItem('accessToken');
+
+        const webSocket = new WebSocket(`wss://localhost:3001/ws?token=${token}`);
 
         // Connection opened
         webSocket.addEventListener("open", (event: Event) => {
             console.log('Connected to the Server');
         });
 
+        const HandleReceiveMessage = async (event: MessageEvent) => {
+            var data: any = null;
+
+            try {
+                data = JSON.parse(event.data);
+            }
+            catch (exception: any) {
+                console.error(exception.message);
+            }
+            if (data == null) return;
+
+            if (data.type === "message") {
+                setMessages(prev => {
+                    var newMessage: IMessage = {
+                        _id: data.id,
+                        username: data.username,
+                        content: data.content,
+                        createAt: data.createAt,
+                        isSelf: data.username === userData?.username
+                    };
+                    console.log('[New Message]', newMessage);
+
+                    return [...prev, newMessage];
+                });
+            }
+        }
+
         // Listen for messages
-        webSocket.addEventListener("message", (event: MessageEvent) => {
-            console.log("Message from server ", event.data)
-        })
+        webSocket.onmessage = HandleReceiveMessage;
 
         wsConnection.current = webSocket;
 
-        return () => wsConnection.current?.close()
+        return () => {
+            wsConnection.current?.close();
+        }
     }, []);
+
+    useLayoutEffect(() => {
+        chatFrameMain.current?.scrollTo(0, chatFrameMain.current.clientHeight);
+    }, [messages])
 
     return (
         <React.Fragment>
@@ -124,7 +215,9 @@ const ChatFrame: React.FunctionComponent<{ style: object | undefined }> = ({ sty
                                 alt="username" />
                         </div>
                         <div className="chat-frame__header__user__info">
-                            <Link href='/account/username'><p>username</p></Link>
+                            <Link href='/account/username'>
+                                <p>{userData?.username || 'username'}</p>
+                            </Link>
                             <small>last online 5 hours ago</small>
                         </div>
                     </div>
@@ -144,9 +237,12 @@ const ChatFrame: React.FunctionComponent<{ style: object | undefined }> = ({ sty
                     </div>
                 </div>
                 <div className="chat-frame__main" ref={chatFrameMain}>
-                    <ChatMessages friendUsername="ngocanh"
+                    <ChatMessages
+                        friendUsername="ngocanh"
                         currentUsername="harryguci" limits={limit}
-                        setFetching={setIsRequireRefreshData} />
+                        setFetching={setIsRequireRefreshData}
+                        messages={messages}
+                        setMessages={setMessages} />
                 </div>
                 <div className="chat-frame__control">
                     <div className="chat-frame__control__left-action">
