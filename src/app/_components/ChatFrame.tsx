@@ -13,6 +13,7 @@ import swal from 'sweetalert';
 import IMessage from "../_interfaces/IMessage";
 import { useRouter } from "next/navigation";
 import { GlobalContext } from "../Context/store";
+import Spinner from "./Spinner";
 
 const ChatFrame: React.FunctionComponent<{
     style: object | undefined,
@@ -41,6 +42,7 @@ const ChatFrame: React.FunctionComponent<{
 
         const [messageContent, setMessageContent] = useState<string>("")
         const [limit, setLimit] = useState<number>(15);
+        const [loading, setLoading] = useState<boolean>(true);
 
         const chatFrameRef = useRef<HTMLDivElement | null>(null);
         const chatFrameMain = useRef<HTMLDivElement | null>(null);
@@ -114,6 +116,7 @@ const ChatFrame: React.FunctionComponent<{
                     });
 
                 setMessages(data);
+                setLoading(false);
             } catch (error: any) {
                 if (error.response.status === 401) {
                     swal({
@@ -179,7 +182,9 @@ const ChatFrame: React.FunctionComponent<{
             }
         }, [chatFrameMain.current, maxSize]);
 
+        //
         // WebSocket Configuration:
+        //
         useEffect(() => {
             const token = sessionStorage.getItem('accessToken') || localStorage.getItem('accessToken');
 
@@ -199,7 +204,8 @@ const ChatFrame: React.FunctionComponent<{
                     data = JSON.parse(event.data);
                 }
                 catch (exception: any) {
-                    console.error(exception.message);
+                    // console.error(exception.message);
+                    return;
                 }
                 if (data == null) return;
 
@@ -229,13 +235,25 @@ const ChatFrame: React.FunctionComponent<{
             }
         }, []);
 
-
+        //
+        //  Handle UI
+        //
         useLayoutEffect(() => {
-            chatFrameMain.current?.scrollTo(0, chatFrameMain.current.scrollHeight);
+            if (chatFrameMain && chatFrameMain.current) {
+                // Scroll to the bottom of the list of messages 
+                chatFrameMain.current.scrollTo(0, chatFrameMain.current.scrollHeight);
 
+                // Adding the show animation
+                chatFrameMain.current.style.animationName = 'showChatFrameMain';
+            }
+
+            // Enable auto refresh data when the user scroll to the top of the list of messages
             setEnableScroll(true);
         }, [messages, chatFrameMain.current])
 
+        //
+        // Handle UI when the user change the size of the window 
+        //
         useLayoutEffect(() => {
             const handler = (event: any) => {
                 if (chatFrameMain && chatFrameMain.current)
@@ -259,6 +277,8 @@ const ChatFrame: React.FunctionComponent<{
         return (
             <React.Fragment>
                 <div className="card chat-frame" ref={chatFrameRef} style={style ?? style}>
+                    {<Spinner style={loading ? { opacity: '1' } : { opacity: '0' }} />}
+
                     <div className="chat-frame__header" ref={chatFrameHeader}>
                         <div className="chat-frame__header__user">
                             <div className="chat-frame__header__user__avatar">
@@ -293,8 +313,7 @@ const ChatFrame: React.FunctionComponent<{
                         <ChatMessages
                             friendUsername={friend ?? ""}
                             currentUsername={userData?.username || ""}
-                            messages={messages}
-                            setMessages={setMessages} />
+                            messages={messages} />
                     </div>
                     <div className="chat-frame__control" ref={chatFrameControl}>
                         <div className="chat-frame__control__left-action">

@@ -8,7 +8,6 @@ import '../_assets/scss/components/notification_popup.scss';
 import axios from "axios";
 import swal from "sweetalert";
 
-
 interface IFriendRequestBtn {
     content: string,
     onclick: MouseEventHandler
@@ -34,7 +33,7 @@ function NotificationPopup(): ReactNode {
             var data = resposne.data;
             var res: INotificationPopup[] = []
 
-            Array.from(data).forEach((item: any) => {
+            Array.from(data).forEach((item: any, index: number) => {
                 var notiItem: INotificationPopup = {
                     title: 'Yêu cầu kết bạn',
                     content: `${item.user1} đã gửi lời mời kết bạn`,
@@ -62,9 +61,11 @@ function NotificationPopup(): ReactNode {
                                         icon: "success",
                                         buttons: ["Aww yiss!"],
                                     });
+                                    setSizeNotis(prev => prev - 1);
+                                    setNotis(prev => prev.filter(p => p !== item));
+                                    setShowMenu(false);
                                 }).catch(error => {
                                     console.error(error);
-
                                 })
                         }
                     }]
@@ -79,6 +80,7 @@ function NotificationPopup(): ReactNode {
 
     const menuRef = useRef<HTMLDivElement>(null);
     const [notis, setNotis] = useState<INotificationPopup[]>([]);
+    const [sizeNotis, setSizeNotis] = useState<number>(0);
 
     useLayoutEffect(() => {
         if (showMemu && menuRef.current)
@@ -86,6 +88,24 @@ function NotificationPopup(): ReactNode {
         else if (menuRef.current)
             menuRef.current.style.maxHeight = '0px';
     }, [showMemu]);
+    
+    useEffect(() => {
+        var token = sessionStorage.getItem('accessToken') || localStorage.getItem('accessToken');
+
+        axios.get(`${process.env.NEXT_PUBLIC_SERVER_URI}/api/FriendRequests/Size`,
+        {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        })
+        .then((response : any) => {
+            setSizeNotis(response.data.size)
+        })
+        .catch(error => swal(error.message, {
+            icon: 'error',
+        }));
+        // return setSizeNotis(0);
+    }, []);
 
     return (
         <Fragment>
@@ -104,17 +124,17 @@ function NotificationPopup(): ReactNode {
                     }}>
                     <FontAwesomeIcon icon={faBell} />
                     <span className="badge badge-noti">
-                        <p>3</p>
+                        <p>{sizeNotis || '0'}</p>
                     </span>
                 </BtnCircle>
                 <div ref={menuRef} className="notification-pop-up__menu box-shadow-1">
                     <ul>
-                        {notis && notis.length > 0 && notis.map(noti =>
-                            <li>
+                        {notis && notis.length > 0 && notis.map((noti, index: number) =>
+                            <li key={index}>
                                 <p className="notification-pop-up__title">{noti.title}</p>
                                 <p className="notification-pop-up__content">{noti.content}</p>
-                                {noti.buttons && noti.buttons.length > 0 && noti.buttons.map(btn =>
-                                    <button className="btn" onClick={btn.onclick}>
+                                {noti.buttons && noti.buttons.length > 0 && noti.buttons.map((btn, j: number) =>
+                                    <button key={j} className="btn" onClick={btn.onclick}>
                                         {btn.content}
                                     </button>
                                 )}

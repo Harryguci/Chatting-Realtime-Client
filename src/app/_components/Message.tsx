@@ -1,4 +1,4 @@
-import React from "react";
+import { useState, useEffect, useRef, memo } from "react";
 import '../_assets/scss/components/message_component.scss';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCaretDown } from "@fortawesome/free-solid-svg-icons";
@@ -11,25 +11,25 @@ function Message({ type, username, content, time }
         time: string | Date | undefined,
     }): React.ReactElement {
 
-    const [className, setClassName] = React.useState(['card', 'message-component'])
-    const [showInfo, setShowInfo] = React.useState(false);
+    const [className, setClassName] = useState(['card', 'message-component'])
+    const [showInfo, setShowInfo] = useState(false);
 
-    const timeElement: any = React.useRef(null);
-    const usernameElement: any = React.useRef(null);
-    const showMoreBtn: any = React.useRef(null);
-    const showMoreBtnIcon: any = React.useRef(null);
-    const submenuControl: any = React.useRef(null);
+    const timeElement: any = useRef(null);
+    const usernameElement: any = useRef(null);
+    const showMoreBtn: any = useRef(null);
+    const showMoreBtnIcon: any = useRef(null);
+    const submenuControl: any = useRef(null);
 
-    const messageElement: any = React.useRef(null);
+    const messageElement: any = useRef(null);
 
 
-    React.useEffect(() => {
+    useEffect(() => {
         if (type) {
             setClassName(['card', 'message-component', type])
         }
     }, [type]);
 
-    React.useEffect(() => {
+    useEffect(() => {
         if (showInfo && timeElement && timeElement.current) {
             timeElement.current.style.maxHeight = '50px';
         }
@@ -37,12 +37,12 @@ function Message({ type, username, content, time }
             timeElement.current.style.maxHeight = '0px';
         }
 
-        if (showInfo && usernameElement && usernameElement.current) {
-            usernameElement.current.style.maxHeight = '50px';
-        }
-        else if (usernameElement && usernameElement.current) {
-            usernameElement.current.style.maxHeight = '0px';
-        }
+        // if (showInfo && usernameElement && usernameElement.current) {
+        //     usernameElement.current.style.maxHeight = '50px';
+        // }
+        // else if (usernameElement && usernameElement.current) {
+        //     usernameElement.current.style.maxHeight = '0px';
+        // }
 
         if (showInfo && showMoreBtn && showMoreBtn.current) {
             showMoreBtn.current.style.maxHeight = '50px';
@@ -90,7 +90,8 @@ function Message({ type, username, content, time }
                     style={{ display: 'block', overflow: 'hidden' }}>
                     {username}
                 </small>
-                <p className="message-component__content" style={{ whiteSpace: 'pre-wrap' }} dangerouslySetInnerHTML={{ __html: content ?? "" }} />
+                <p className="message-component__content" style={{ whiteSpace: 'pre-wrap' }}
+                    dangerouslySetInnerHTML={{ __html: content ?? "" }} />
                 <small ref={timeElement}
                     style={{ display: 'block', overflow: 'hidden' }}>
                     {time ? FormatTime(time.toString()) : ''}
@@ -118,4 +119,4 @@ function Message({ type, username, content, time }
     )
 }
 
-export default React.memo(Message);
+export default memo(Message);

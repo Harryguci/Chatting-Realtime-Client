@@ -1,4 +1,4 @@
-import { Fragment, ReactNode, useEffect, useRef, SetStateAction, Dispatch, useState, ChangeEventHandler, ChangeEvent, useContext } from "react"
+import { Fragment, ReactNode, useEffect, useRef, SetStateAction, Dispatch, useState, ChangeEvent, useContext } from "react"
 import '../_assets/scss/components/search_box.scss';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faAngleDown, faMagnifyingGlass } from "@fortawesome/free-solid-svg-icons";
@@ -66,16 +66,16 @@ function SearchBox({ style, searchText, setSearchText }:
                 Authorization: `Bearer ${token}`
             }
         }).then(response => response.data)
-        .catch(error => {
-            swal(error.message, {
-                title: 'Error',
-                //@ts-ignore
-                buttons: {
-                    Ok: 'Ok',
-                },
-                icon: 'error'
-            });
-        })
+            .catch(error => {
+                swal(error.message, {
+                    title: 'Error',
+                    //@ts-ignore
+                    buttons: {
+                        Ok: 'Ok',
+                    },
+                    icon: 'error'
+                });
+            })
         if (data) {
             swal('Gửi yêu cầu thành công', {
                 title: 'Add Friend',
@@ -86,13 +86,13 @@ function SearchBox({ style, searchText, setSearchText }:
                 icon: 'success'
             });
         }
-    }   
+    }
 
     return (
         <Fragment>
             <form style={style} ref={formRef} className="search-box box-shadow-1 rounded-1">
                 <div style={{ display: "flex", alignItems: 'center', paddingLeft: '1rem' }}>
-                    <FontAwesomeIcon icon={faMagnifyingGlass} style={{ fontSize: '14px', color: '#666666' }} />
+                    <FontAwesomeIcon icon={faMagnifyingGlass} style={{ maxHeight: '14px', fontSize: '14px', color: '#666666' }} />
                     <input className="form-control"
                         style={{ padding: 1 + 'rem', width: '100%', border: 'none' }}
                         type="text" name="search" id="search"

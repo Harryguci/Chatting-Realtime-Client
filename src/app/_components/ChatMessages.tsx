@@ -5,26 +5,10 @@ const ChatMessages: React.FunctionComponent<{
     friendUsername: string,
     currentUsername: string,
     messages: Array<IMessage>,
-    setMessages: Function
-}> = ({ friendUsername, currentUsername, messages, setMessages }) => {
-    const [isLoading, setIsLoading] = useState<boolean>(false);
-    const LoadingElement = React.useRef<HTMLDivElement>(null);
-
-    useEffect(() => {
-        if (LoadingElement && LoadingElement.current) {
-            LoadingElement.current.style.maxHeight = isLoading ? '200px' : '0px';
-        }
-    }, [isLoading, LoadingElement])
-
+}> = ({ friendUsername, currentUsername, messages }) => {
     return (
         <div>
             <div className="chat-message" style={{ position: 'relative' }}>
-                <p ref={LoadingElement} style={{
-                    fontSize: '1rem',
-                    overflow: 'hidden',
-                    display: 'block',
-                    transition: 'all 1s ease-in-out'
-                }}>Loading...</p>
                 {messages?.length > 0 && (
                     messages.map((mess: IMessage, index: number) =>
                         <Message

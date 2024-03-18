@@ -10,6 +10,7 @@ import { usePathname } from "next/navigation";
 import { GlobalContext } from "../Context/store";
 import { useRouter } from "next/navigation";
 import NotificationPopup from "./NotificationPopup";
+import axios from "axios";
 interface NavbarItem {
     href: string | undefined | null,
     children: React.FunctionComponent | any,
@@ -116,9 +117,10 @@ export default function NavbarSidebar() {
             },
             dangerMode: true,
         })
-            .then((value) => {
+            .then(async (value) => {
                 switch (value) {
                     case "accept":
+                        var token = sessionStorage.getItem('accessToken') || localStorage.getItem('accessToken')
                         localStorage.removeItem('accessToken');
                         sessionStorage.removeItem('accessToken');
                         localStorage.removeItem('currentUser');
@@ -128,6 +130,14 @@ export default function NavbarSidebar() {
                             roles: '',
                             email: ''
                         })
+
+                        var data = await axios.put(`${process.env.NEXT_PUBLIC_SERVER_URI}/api/Auth/Logout`, {}, {
+                            headers: {
+                                Authorization: `Bearer ${token}`
+                            }
+                        }).then(response => response.data).catch(error => error);
+                        console.log(data);
+
                         router.push('/auth/login')
                         break;
 
