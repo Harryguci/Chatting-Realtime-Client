@@ -1,0 +1,83 @@
+@use '../base';
+
+.message-card {
+    display: block;
+    position: relative;
+    width: 100%;
+    padding: 1rem;
+    border-radius: 0.7rem;
+    opacity: 0.7;
+    cursor: pointer;
+    overflow: hidden;
+    color: black;
+    margin: 1rem 0;
+
+    &::before {
+        content: '';
+        display: block;
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 5px;
+        max-height: 0;
+        background: base.$blue-light;
+        background: linear-gradient(100deg, base.$blue-light 0%, base.$blue 100%);
+        transition: max-height 0.2s ease-in-out;
+    }
+
+    &:hover {
+        opacity: 1;
+
+        &::before {
+            max-height: 5px;
+        }
+    }
+
+    &__head {
+        display: flex;
+        gap: 1rem;
+
+        &__user-info {
+            margin: 1rem 0 auto 0;
+        }
+
+        &__avatar {
+            margin: auto 0;
+            width: 5rem;
+            max-width: 70px;
+            aspect-ratio: 1/1;
+            overflow: hidden;
+            position: relative;
+            border-radius: 50%;
+
+            img {
+                object-fit: cover;
+                width: 100%;
+                height: 100%;
+            }
+        }
+
+        &__state {
+            color: #999999;
+            margin-left: auto;
+            margin-right: 0;
+        }
+    }
+
+    &__content {
+        margin: 1rem 0;
+        display: flex;
+        flex-wrap: nowrap;
+        width: 100%;
+        gap: 5px;
+
+        &__noti {
+            width: max-content;
+            font-weight: bold;
+            color: #ff5555;
+            margin-right: 1rem;
+            margin-left: auto;
+        }
+    }
+}

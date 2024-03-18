@@ -57,6 +57,10 @@ a {
     color: red !important;
 }
 
+.text-green {
+    color: #55aa55;
+}
+
 .text-blue {
     color: darkblue;
 }
@@ -136,3 +140,27 @@ a.bg-primary-gradient {
     box-shadow: 3px 3px 15px rgba($color: #000000, $alpha: 0.1);
 }
 
+.badge {
+    position: absolute;
+    top: 0;
+    right: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background: white;
+    border-radius: 50%;
+    font-weight: bold !important;
+    font-size: 1rem;
+
+    min-width: 25px;
+    transform: translate(50%, -20%);
+
+    aspect-ratio: 1/1;
+}
+
+.badge-noti {
+    background: $blue-light;
+    background: linear-gradient(100deg, $blue-light 0%, $blue 100%);
+    color: white;
+}

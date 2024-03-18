@@ -2,12 +2,8 @@ import React from "react";
 import '../_assets/scss/components/message_component.scss';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCaretDown } from "@fortawesome/free-solid-svg-icons";
-function FormatTime(time: string): string {
-    let str = time;
-    str = str.replace('T', ' ').substring(0, 16);
+import FormatTime from "../_helper/FormatTime";
 
-    return str;
-}
 function Message({ type, username, content, time }
     : {
         type: 'left' | 'right', username: string | undefined,
@@ -86,7 +82,7 @@ function Message({ type, username, content, time }
             className={className?.length > 0 ? className.join(' ') : 'card message-component'}
             onClick={handleClick}>
             <div className="message-component__avatar">
-                <img src="/HR-Logo-new.png" alt="avatar" />
+                <img src="/cat-avatar.gif" alt="avatar" />
             </div>
             <div className="message-component__main">
                 <small ref={usernameElement}
@@ -94,10 +90,9 @@ function Message({ type, username, content, time }
                     style={{ display: 'block', overflow: 'hidden' }}>
                     {username}
                 </small>
-                <p className="message-component__content" dangerouslySetInnerHTML={{ __html: content ?? "" }} />
+                <p className="message-component__content" style={{ whiteSpace: 'pre-wrap' }} dangerouslySetInnerHTML={{ __html: content ?? "" }} />
                 <small ref={timeElement}
                     style={{ display: 'block', overflow: 'hidden' }}>
-                    {/* {time?.toLocaleString()} */}
                     {time ? FormatTime(time.toString()) : ''}
                 </small>
                 <button ref={showMoreBtn}

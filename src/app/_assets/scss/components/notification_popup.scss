@@ -1,0 +1,27 @@
+.notification-pop-up {
+    display: flex;
+    position: relative;
+    z-index: 100;
+
+    .notification-pop-up__menu {
+        position: absolute;
+        top: 50px;
+        right: 50px;
+        background: white;
+        border-radius: 5px;
+        max-width: 200px;
+
+        max-height: 0;
+        overflow: hidden;
+
+        transition: max-height 0.3s ease-in-out;
+
+        li {
+            padding: 0.5rem 1rem;
+        }
+    }
+
+    &__title {
+        font-weight: bold;
+    }
+}

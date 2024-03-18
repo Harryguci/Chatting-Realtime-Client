@@ -3,6 +3,7 @@ import { Inter } from "next/font/google";
 import './_assets/scss/style.scss';
 import NavbarSidebar from "./_components/NavbarSidebar";
 import { GlobalContextProvider } from "./Context/store";
+import NotificationPopup from "./_components/NotificationPopup";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {

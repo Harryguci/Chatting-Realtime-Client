@@ -9,7 +9,7 @@ import { faArrowDown, faRightFromBracket } from '@fortawesome/free-solid-svg-ico
 import { usePathname } from "next/navigation";
 import { GlobalContext } from "../Context/store";
 import { useRouter } from "next/navigation";
-
+import NotificationPopup from "./NotificationPopup";
 interface NavbarItem {
     href: string | undefined | null,
     children: React.FunctionComponent | any,
@@ -56,14 +56,23 @@ export default function NavbarSidebar() {
 
     useLayoutEffect(() => {
         let indexCurrent = -1;
+
         navState.forEach((item, index) => {
-            if (item.href === pathname)
+            if (pathname?.toLowerCase()?.startsWith(item.href ?? ""))
                 indexCurrent = index
+
             navElement.current?.children[index]
                 .classList.remove('active');
         });
         if (indexCurrent >= 0)
-            navElement.current?.children[indexCurrent].classList.add('active');
+            navElement.current?.children[indexCurrent]
+                .classList.add('active');
+
+        return () => {
+            navState.forEach((item, index) => {
+                navElement.current?.children[index].classList.remove('active');
+            })
+        }
     }, [pathname])
 
     useEffect(() => {
@@ -85,7 +94,7 @@ export default function NavbarSidebar() {
             var currentPageIndex: number = -1;
 
             navState.forEach((item, index) => {
-                if (item.href === page)
+                if (item.href && page.includes(item.href))
                     currentPageIndex = index;
                 return item;
             });
@@ -132,8 +141,9 @@ export default function NavbarSidebar() {
 
     return (
         <Fragment>
-            {pathname && !['/auth/login', '/auth/signup'].includes(pathname) &&
+            {pathname && !['/auth/login', '/auth/signup'].includes(pathname.toLowerCase()) &&
                 <nav className="navbar-sidebar">
+                    <NotificationPopup />
                     <div className="user-info">
                         <div className="thumbnail user-info__avatar-thumb">
                             <img src="/Harryguci-Logo-Primary.svg" alt="avatar" />
@@ -166,11 +176,12 @@ export default function NavbarSidebar() {
                             </>
                         )}
 
-                        {userData && <button className="btn"
-                            style={{ display: 'flex', alignItems: 'center', gap: '10px' }}
-                            onClick={handleLogout}>
-                            <FontAwesomeIcon icon={faRightFromBracket} />{" "}Logout
-                        </button>}
+                        {userData &&
+                            <button className="btn"
+                                style={{ display: 'flex', alignItems: 'center', gap: '10px' }}
+                                onClick={handleLogout}>
+                                <FontAwesomeIcon icon={faRightFromBracket} />{" "}Logout
+                            </button>}
                     </div>
                 </nav>}
         </Fragment>

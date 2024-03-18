@@ -14,4 +14,16 @@
     .form-control {
         border: none;
     }
+
+    &__list-result {
+        position: absolute;
+        display: block;
+        width: 100%;
+        transform: translate(0, 100%);
+        bottom: 0;
+        left: 0;
+        background: white;
+        padding: 1rem;
+        z-index: 10;
+    }
 }

@@ -4,11 +4,9 @@ import Message from './Message'
 const ChatMessages: React.FunctionComponent<{
     friendUsername: string,
     currentUsername: string,
-    limits: number,
-    setFetching: Function,
     messages: Array<IMessage>,
     setMessages: Function
-}> = ({ friendUsername, currentUsername, limits, setFetching, messages, setMessages }) => {
+}> = ({ friendUsername, currentUsername, messages, setMessages }) => {
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const LoadingElement = React.useRef<HTMLDivElement>(null);
 
@@ -31,7 +29,7 @@ const ChatMessages: React.FunctionComponent<{
                     messages.map((mess: IMessage, index: number) =>
                         <Message
                             key={index}
-                            type={mess.username === friendUsername ? "left" : 'right'}
+                            type={mess.username === currentUsername ? "right" : 'left'}
                             username={mess.username}
                             content={mess.content}
                             time={mess.createAt} />)

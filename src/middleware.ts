@@ -1,7 +1,7 @@
-import { NextResponse, type NextRequest } from 'next/server'
+import { NextRequest, NextResponse } from 'next/server'
 
 export function middleware(request: NextRequest) {
-    console.log('Run middleware');
+    // console.log(process.env.NEXT_PUBLIC_SERVER_URI);
 
     NextResponse.next();
 }
