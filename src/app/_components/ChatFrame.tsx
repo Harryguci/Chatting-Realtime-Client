@@ -14,6 +14,9 @@ import IMessage from "../_interfaces/IMessage";
 import { useRouter } from "next/navigation";
 import { GlobalContext } from "../Context/store";
 import Spinner from "./Spinner";
+import { server } from "@/config";
+import Image from "next/image";
+
 
 const ChatFrame: React.FunctionComponent<{
     style: object | undefined,
@@ -77,7 +80,7 @@ const ChatFrame: React.FunctionComponent<{
                 }
             }
 
-            const { data, status } = await axios.post(`${process.env.NEXT_PUBLIC_SERVER_URI}/api/Messages`, {
+            const { data, status } = await axios.post(`${server}/api/Messages`, {
                 id: '',
                 username: userData?.username,
                 roomId: roomIdState,
@@ -92,7 +95,7 @@ const ChatFrame: React.FunctionComponent<{
             const accessToken = sessionStorage.getItem('accessToken') || localStorage.getItem('accessToken');
 
             const { data, status } =
-                await axios.get(`${process.env.NEXT_PUBLIC_SERVER_URI}/api/Messages/Count?roomId=room1`, {
+                await axios.get(`${server}/api/Messages/Count?roomId=room1`, {
                     headers: {
                         'Authorization': `Bearer ${accessToken}`
                     }
@@ -109,7 +112,7 @@ const ChatFrame: React.FunctionComponent<{
 
                 const { data, status }
                     : { data: Array<IMessage>, status: number | string }
-                    = await axios.get(`${process.env.NEXT_PUBLIC_SERVER_URI}/api/Messages/RoomId/${roomIdState}?limit=${limit}`, {
+                    = await axios.get(`${server}/api/Messages/RoomId/${roomIdState}?limit=${limit}`, {
                         headers: {
                             'Authorization': `Bearer ${accessToken}`
                         }
@@ -141,7 +144,7 @@ const ChatFrame: React.FunctionComponent<{
         }
 
         const getRoomId = async () => {
-            await axios.get(`${process.env.NEXT_PUBLIC_SERVER_URI}/api/RoomAccounts/Friend?user1=${userData ? userData.username : JSON.parse(localStorage.getItem('currentUser') ?? "{}").username}&user2=${friend}`)
+            await axios.get(`${server}/api/RoomAccounts/Friend?user1=${userData ? userData.username : JSON.parse(localStorage.getItem('currentUser') ?? "{}").username}&user2=${friend}`)
                 .then(response => {
                     setRoomIdState(response.data.id);
                 })
@@ -161,7 +164,7 @@ const ChatFrame: React.FunctionComponent<{
 
             getNumberOfMessage();
             getMessage(null);
-        }, [limit, roomIdState]);
+        }, [limit, roomIdState, roomId]);
 
         useEffect(() => {
             if (!enableScroll || !chatFrameMain || !chatFrameMain.current)
@@ -282,7 +285,13 @@ const ChatFrame: React.FunctionComponent<{
                     <div className="chat-frame__header" ref={chatFrameHeader}>
                         <div className="chat-frame__header__user">
                             <div className="chat-frame__header__user__avatar">
-                                <img src="/cat-avatar.gif"
+                                <Image width={0}
+                                    height={0}
+                                    sizes="100vw"
+                                    style={{ width: '100%', height: 'auto' }}
+                                    src="/cat-avatar.gif"
+                                    blurDataURL="/cat-avatar-blur.png"
+                                    placeholder="blur"
                                     alt="username" />
                             </div>
                             <div className="chat-frame__header__user__info">
@@ -296,7 +305,7 @@ const ChatFrame: React.FunctionComponent<{
                             <BtnCircle id="" className="bg-white-smoke"
                                 type="button"
                                 onClick={handleClickCall}
-                                style={undefined}>
+                                style={loading ? { width: '50px', height: '50px' } : undefined}>
                                 <FontAwesomeIcon icon={faPhone} />
                             </BtnCircle>
                             <BtnCircle
@@ -304,7 +313,7 @@ const ChatFrame: React.FunctionComponent<{
                                 className="bg-primary-gradient text-white"
                                 type="button"
                                 onClick={handleClickCall}
-                                style={undefined}>
+                                style={loading ? { width: '50px', height: '50px' } : undefined}>
                                 <FontAwesomeIcon icon={faVideo} />
                             </BtnCircle>
                         </div>
@@ -321,7 +330,7 @@ const ChatFrame: React.FunctionComponent<{
                                 id={'chat-frame__control__left-action__more-btn'}
                                 className={undefined}
                                 type={'button'}
-                                style={undefined}
+                                style={{ width: 'auto', height: '100%' }}
                                 onClick={undefined}
                             >
                                 <FontAwesomeIcon icon={faPlus} />
@@ -351,7 +360,7 @@ const ChatFrame: React.FunctionComponent<{
                                 className={undefined}
                                 onClick={undefined}
                                 id={'chat-frame__control__right-action__icon'}
-                                style={undefined}
+                                style={{ width: 'auto', height: '100%' }}
                                 type={'button'}>
                                 <FontAwesomeIcon icon={faFaceSmile} />
                             </BtnCircle>
@@ -359,7 +368,7 @@ const ChatFrame: React.FunctionComponent<{
                                 className={undefined}
                                 onClick={handleSendClick}
                                 id={'chat-frame__control__right-action__icon'}
-                                style={undefined}
+                                style={{ width: 'auto', height: '100%' }}
                                 type={'button'}>
                                 <FontAwesomeIcon icon={faPaperPlane} />
                             </BtnCircle>

@@ -19,7 +19,7 @@ function Logout() {
             email: ''
         })
         router.push('/auth/login');
-    });
+    }, []);
 
     return () => {
         <>

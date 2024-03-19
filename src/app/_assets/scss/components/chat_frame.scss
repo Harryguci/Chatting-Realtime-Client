@@ -126,7 +126,9 @@ $blue-white: #ffe8ff;
 
         &__chat-container {
             display: flex;
-            flex: 0 0 80%;
+            // flex: 0 0 80%;
+            width: 100%;
+            margin: 0 10px;
             position: relative;
 
             input {

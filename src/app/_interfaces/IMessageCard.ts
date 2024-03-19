@@ -1,6 +1,10 @@
 interface IMessageCard {
     content: string,
-    user: object | { username: string, lastLogin: string },
+    user: object | {
+        username: string,
+        lastLogin: string,
+        lastLoginNumber: number
+    },
     href: string
 }
 

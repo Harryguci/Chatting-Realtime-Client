@@ -11,6 +11,8 @@ import { GlobalContext } from "../Context/store";
 import { useRouter } from "next/navigation";
 import NotificationPopup from "./NotificationPopup";
 import axios from "axios";
+import { server } from "@/config";
+import Image from "next/image";
 interface NavbarItem {
     href: string | undefined | null,
     children: React.FunctionComponent | any,
@@ -57,30 +59,34 @@ export default function NavbarSidebar() {
 
     useLayoutEffect(() => {
         let indexCurrent = -1;
+        const localNavElement = navElement.current;
+        if (!localNavElement) return;
 
         navState.forEach((item, index) => {
             if (pathname?.toLowerCase()?.startsWith(item.href ?? ""))
                 indexCurrent = index
 
-            navElement.current?.children[index]
+            localNavElement.children[index]
                 .classList.remove('active');
         });
         if (indexCurrent >= 0)
-            navElement.current?.children[indexCurrent]
+            localNavElement.children[indexCurrent]
                 .classList.add('active');
 
         return () => {
             navState.forEach((item, index) => {
-                navElement.current?.children[index].classList.remove('active');
+                localNavElement.children[index].classList.remove('active');
             })
         }
-    }, [pathname])
+    }, [pathname, navState])
 
     useEffect(() => {
         const page: string | null = pathname;
+        const localNavElement = navElement.current;
+        const localSliderElement = navSlider.current;
         sessionStorage.setItem('current-page', pathname ?? "")
 
-        if (navSlider && navSlider.current) {
+        if (localSliderElement) {
             const navItem = document.querySelector('nav .nav__item');
             var style = null
             if (navItem)
@@ -100,12 +106,12 @@ export default function NavbarSidebar() {
                 return item;
             });
 
-            if (style && navSlider.current) {
-                var item: any = navElement.current?.children[currentPageIndex];
-                navSlider.current.style.top = item?.offsetTop + 'px';
+            if (style && localSliderElement && localNavElement) {
+                var item: any = localNavElement.children[currentPageIndex];
+                localSliderElement.style.top = item?.offsetTop + 'px';
             }
         }
-    }, [pathname]);
+    }, [pathname, navState]);
 
     const handleLogout = (event: any) => {
         swal("Are you sure to want to Logout?", {
@@ -125,13 +131,14 @@ export default function NavbarSidebar() {
                         sessionStorage.removeItem('accessToken');
                         localStorage.removeItem('currentUser');
                         sessionStorage.removeItem('currentUser');
+
                         setUserData({
                             username: '',
                             roles: '',
                             email: ''
                         })
 
-                        var data = await axios.put(`${process.env.NEXT_PUBLIC_SERVER_URI}/api/Auth/Logout`, {}, {
+                        var data = await axios.put(`${server}/api/Auth/Logout`, {}, {
                             headers: {
                                 Authorization: `Bearer ${token}`
                             }
@@ -153,10 +160,18 @@ export default function NavbarSidebar() {
         <Fragment>
             {pathname && !['/auth/login', '/auth/signup'].includes(pathname.toLowerCase()) &&
                 <nav className="navbar-sidebar">
-                    <NotificationPopup />
+                    {userData && userData.username && <NotificationPopup />}
                     <div className="user-info">
                         <div className="thumbnail user-info__avatar-thumb">
-                            <img src="/Harryguci-Logo-Primary.svg" alt="avatar" />
+                            <Image 
+                                width={0}
+                                height={0}
+                                sizes="100vw"
+                                style={{ width: '100%', height: 'auto' }}
+                                src="/Harryguci-Logo-Primary.svg"
+                                blurDataURL="//Harryguci-Logo-Primary-blur.png"
+                                placeholder="blur"
+                                alt="avatar" />
                         </div>
                         <div className="user-info__description">
                             <p className="text-center text-bold">
@@ -179,14 +194,14 @@ export default function NavbarSidebar() {
                     </ul>
 
                     <div className="control-panel" style={{ marginBottom: '0', marginTop: 'auto' }}>
-                        {!userData && (
+                        {!userData?.username && (
                             <>
                                 <Link href={'/auth/login'} className="btn">Login</Link>
                                 <Link href={'/auth/signup'} className="btn">Sign Up</Link>
                             </>
                         )}
 
-                        {userData &&
+                        {userData?.username &&
                             <button className="btn"
                                 style={{ display: 'flex', alignItems: 'center', gap: '10px' }}
                                 onClick={handleLogout}>

@@ -3,6 +3,7 @@ import '../_assets/scss/components/message_component.scss';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCaretDown } from "@fortawesome/free-solid-svg-icons";
 import FormatTime from "../_helper/FormatTime";
+import Image from "next/image";
 
 function Message({ type, username, content, time }
     : {
@@ -82,7 +83,13 @@ function Message({ type, username, content, time }
             className={className?.length > 0 ? className.join(' ') : 'card message-component'}
             onClick={handleClick}>
             <div className="message-component__avatar">
-                <img src="/cat-avatar.gif" alt="avatar" />
+                <Image width={0}
+                    height={0}
+                    sizes="100vw"
+                    style={{ width: '100%', height: 'auto' }}
+                    src="/cat-avatar.gif" alt="avatar"
+                    blurDataURL="/cat-avatar-blur.png"
+                    placeholder="blur" />
             </div>
             <div className="message-component__main">
                 <small ref={usernameElement}

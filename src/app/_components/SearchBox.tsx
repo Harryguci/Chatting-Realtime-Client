@@ -6,6 +6,7 @@ import axios from "axios";
 import swal from "sweetalert";
 import Link from "next/link";
 import { GlobalContext } from "../Context/store";
+import { server } from "@/config";
 
 interface SearchResult {
     username: '',
@@ -57,7 +58,7 @@ function SearchBox({ style, searchText, setSearchText }:
 
     const handleAddFriend = async (friend: string) => {
         const token = sessionStorage.getItem('accessToken') || localStorage.getItem('accessToken');
-        const data = await axios.post(`${process.env.NEXT_PUBLIC_SERVER_URI}/api/FriendRequests`, {
+        const data = await axios.post(`${server}/api/FriendRequests`, {
             id: '',
             user1: currentUser?.username,
             user2: friend
@@ -123,7 +124,7 @@ function SearchBox({ style, searchText, setSearchText }:
                     gap: '5px',
                     boxShadow: '-5px 0 5px rgba(0,0,0,0.02)'
                 }}>
-                    <FontAwesomeIcon icon={faAngleDown} />{" "}Messages
+                    <FontAwesomeIcon style={{ fontSize: '14px', maxHeight: '14px' }} icon={faAngleDown} />{" "}Messages
                 </button>
             </form>
         </Fragment>

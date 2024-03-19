@@ -10,7 +10,7 @@ export default function Chat({ params }: { params: { id: string } }) {
     const [chatFrameWidth, setChatFrameWidth] = useState('60%');
     useEffect(() => {
         document.title = 'Chat | ' + params.id;
-    }, []);
+    }, [params.id]);
 
     return (
         <Fragment>

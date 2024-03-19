@@ -2,29 +2,38 @@ import { Fragment, ReactNode, memo, useEffect } from "react"
 import '../_assets/scss/components/message_card.scss';
 import { useRouter } from "next/navigation";
 import { useRef } from "react";
+import Image from "next/image";
 function MessageCard({ content, user, href }: { content: string, user: any, href: string }): ReactNode {
     const cardRef = useRef<HTMLDivElement>(null);
     const router = useRouter();
 
     useEffect(() => {
+        const localCard = cardRef.current;
+
         if (cardRef != null && cardRef.current != null) {
             cardRef.current.onclick = () => {
                 router.push(href);
             };
         }
 
+
         return () => {
-            if (cardRef != null && cardRef.current != null)
-                cardRef.current.onclick = () => { };
+            if (localCard != null)
+                localCard.onclick = () => { };
         }
-    }, [cardRef.current]);
+    }, [cardRef, href, router]);
 
     return (
         <Fragment>
             <div ref={cardRef} className="card message-card box-shadow-1">
                 <div className="message-card__head">
                     <div className="message-card__head__avatar">
-                        <img src={user.avatar || "/cat-avatar.gif"} alt="avatar" />
+                        <Image width={0}
+                            height={0}
+                            sizes="100vw"
+                            style={{ width: '100%', height: 'auto' }}
+                            src={user.avatar || "/cat-avatar.gif"}
+                            blurDataURL="/cat-avatar-blur.png" alt="avatar" />
                     </div>
                     <div className="message-card__head__user-info">
                         <p className="text-blue" style={{ fontWeight: 'bold' }}>{user.username}</p>

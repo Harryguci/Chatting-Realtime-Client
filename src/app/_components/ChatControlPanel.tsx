@@ -12,6 +12,7 @@ import { useRouter } from "next/navigation";
 import swal from "sweetalert";
 import { GlobalContext } from "../Context/store";
 import TimeDiff from "../_helper/TimeDiff";
+import { server } from "@/config";
 
 function ChatControlPanel({ style }: { style: object | undefined }): ReactNode {
     const router = useRouter();
@@ -23,7 +24,7 @@ function ChatControlPanel({ style }: { style: object | undefined }): ReactNode {
     const { data: userData } = useContext(GlobalContext);
 
     const getRoomId = async (friend: string) => {
-        return await axios.get(`${process.env.NEXT_PUBLIC_SERVER_URI}/api/RoomAccounts/Friend?user1=${userData ? userData.username : JSON.parse(localStorage.getItem('currentUser') ?? "{}").username}&user2=${friend}`)
+        return await axios.get(`${server}/api/RoomAccounts/Friend?user1=${userData ? userData.username : JSON.parse(localStorage.getItem('currentUser') ?? "{}").username}&user2=${friend}`)
             .then(response => {
                 return response.data.id;
             })
@@ -41,7 +42,7 @@ function ChatControlPanel({ style }: { style: object | undefined }): ReactNode {
         var token: string | null = sessionStorage.getItem('accessToken') || localStorage.getItem('accessToken');
         var currentUsername = JSON.parse(sessionStorage.getItem('currentUser') ?? "{}").username;
 
-        axios.get(`${process.env.NEXT_PUBLIC_SERVER_URI}/api/Relationships`, {
+        axios.get(`${server}/api/Relationships`, {
             headers: {
                 Authorization: `Bearer ${token}`
             }
@@ -53,18 +54,21 @@ function ChatControlPanel({ style }: { style: object | undefined }): ReactNode {
                 const friend = item.user1 !== currentUsername ? item.user1 : item.user2;
                 const roomId = await getRoomId(friend)
 
-                const lastOneMess: string = await axios.get(`${process.env.NEXT_PUBLIC_SERVER_URI}/api/Messages/RoomId/${roomId}?limit=1`,
+                const lastOneMess: string = await axios.get(`${server}/api/Messages/RoomId/${roomId}?limit=1`,
                     {
                         headers: {
                             Authorization: `Bearer ${token}`
                         }
                     }).then(response => {
-                        if (response.data.length > 0) return response.data[0].content;
+                        if (response.data.length > 0) {
+
+                            return response.data[0].content;
+                        }
                         return 'Chưa có tin nhắn nào'
                     })
                     .catch(error => 'ERROR');
 
-                const friendAccount = await axios.get(`${process.env.NEXT_PUBLIC_SERVER_URI}/api/Accounts/Find/${friend}`, {
+                var friendAccount = await axios.get(`${server}/api/Accounts/Find/${friend}`, {
                     headers: {
                         Authorization: `Bearer ${token}`
                     }
@@ -80,11 +84,22 @@ function ChatControlPanel({ style }: { style: object | undefined }): ReactNode {
                     user: {
                         username: friend,
                         lastLogin: `<b class="text-green">${txtLastLogin}</b>`,
+                        lastLoginNumber: friendAccount.lastLogin ? new Date(friendAccount.lastLogin).getTime() : -1
                     },
                     href: `/chat/${friend}`
                 }
 
                 listFriend = [...listFriend, messageCardItem];
+                console.log(listFriend);
+
+                listFriend.sort((a: any, b: any) => {
+                    if (b.user.lastLoginNumber === -1 || (a.user.lastLoginNumber < b.user.lastLoginNumber))
+                        return 1;
+                    if (a.user.lastLoginNumber === -1 || (a.user.lastLoginNumber > b.user.lastLoginNumber))
+                        return -1;
+
+                    return 0;
+                });
 
                 setMessageCards(listFriend);
             })
@@ -101,7 +116,7 @@ function ChatControlPanel({ style }: { style: object | undefined }): ReactNode {
         return () => {
             setMessageCards([]);
         }
-    }, []);
+    }, [router]);
 
     useLayoutEffect(() => {
         if (messageCardWrapRef && messageCardWrapRef.current)
@@ -131,8 +146,8 @@ function ChatControlPanel({ style }: { style: object | undefined }): ReactNode {
                 <div ref={messageCardWrapRef} style={{ transition: 'opacity 0.3s 0.3s ease-in-out', opacity: '0' }}
                     className="message-card-wrapper">
                     {messageCards && messageCards.length > 0
-                        && messageCards.map(item =>
-                            <MessageCard key={item.href} {...item} />
+                        && messageCards.map((item, index) =>
+                            <MessageCard key={index} {...item} />
                         )}
                     {!loading && messageCards.length <= 0 &&
                         <h3 className="text-center text-blue">Hãy thêm 1 bạn bè để trò chuyện</h3>}

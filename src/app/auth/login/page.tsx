@@ -9,6 +9,9 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faFacebookF, faTwitter, faTiktok } from '@fortawesome/free-brands-svg-icons';
 import { useRouter } from 'next/navigation'
 import { DataType, GlobalContext } from "@/app/Context/store";
+import { server } from "@/config";
+import Image from "next/image";
+import AccountValid from "@/app/_helper/ValidationAccount";
 
 const Login: React.FunctionComponent = () => {
     const { setData }: {
@@ -34,7 +37,18 @@ const Login: React.FunctionComponent = () => {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        const data = await axios.post('https://localhost:3001/api/auth/login', {
+        const validRes: AccountValid = AccountValid.ValidationAccount({ username, password });
+
+        if (!validRes.Ok) {
+            swal({
+                title: "Error!",
+                text: `${validRes.inCorrectProps} không đúng định dạng`,
+                icon: "error",
+                buttons: ["Try again!"],
+            });
+            return;
+        }
+        const data = await axios.post(`${server}/api/auth/login`, {
             username, password
         }, {
             headers: {
@@ -82,7 +96,16 @@ const Login: React.FunctionComponent = () => {
                     <div className="container">
                         <div className="signin-content">
                             <div className="signin-image">
-                                <figure><img src="/signin-image.jpg" alt="sing up image" /></figure>
+                                <figure>
+                                    <Image
+                                        src="/signin-image.jpg" alt="sing up image"
+                                        width={0}
+                                        height={0}
+                                        sizes="100vw"
+                                        style={{ width: '100%', height: 'auto' }}
+                                        blurDataURL="/Harryguci-Logo-Primary-blur.png"
+                                        placeholder="blur" />
+                                </figure>
                                 <Link href="/auth/signup" className="signup-image-link btn bg-primary-gradient text-white">
                                     Create an account
                                 </Link>

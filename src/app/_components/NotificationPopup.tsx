@@ -7,6 +7,7 @@ import { faBell } from "@fortawesome/free-solid-svg-icons";
 import '../_assets/scss/components/notification_popup.scss';
 import axios from "axios";
 import swal from "sweetalert";
+import { server } from "@/config";
 
 interface IFriendRequestBtn {
     content: string,
@@ -25,7 +26,7 @@ function NotificationPopup(): ReactNode {
 
         var token = sessionStorage.getItem('accessToken') || localStorage.getItem('accessToken');
 
-        await axios.get(`${process.env.NEXT_PUBLIC_SERVER_URI}/api/FriendRequests/`, {
+        await axios.get(`${server}/api/FriendRequests/`, {
             headers: {
                 Authorization: `Bearer ${token}`
             }
@@ -43,7 +44,7 @@ function NotificationPopup(): ReactNode {
                     }, {
                         content: 'Accept',
                         onclick: async () => {
-                            await axios.put(`${process.env.NEXT_PUBLIC_SERVER_URI}/api/FriendRequests/${item.id}`, {
+                            await axios.put(`${server}/api/FriendRequests/${item.id}`, {
                                 id: item.id,
                                 user1: item.user1,
                                 user2: item.user2,
@@ -92,7 +93,7 @@ function NotificationPopup(): ReactNode {
     useEffect(() => {
         var token = sessionStorage.getItem('accessToken') || localStorage.getItem('accessToken');
 
-        axios.get(`${process.env.NEXT_PUBLIC_SERVER_URI}/api/FriendRequests/Size`,
+        axios.get(`${server}/api/FriendRequests/Size`,
         {
             headers: {
                 Authorization: `Bearer ${token}`
