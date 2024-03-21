@@ -7,18 +7,16 @@ import swal from "sweetalert";
 import Link from "next/link";
 import { GlobalContext } from "../Context/store";
 import { server } from "@/config";
+import ISearchResult from "../_interfaces/ISearchResult";
 
-interface SearchResult {
-    username: '',
-    roles: '',
-    email: '',
-    isFriend: boolean,
-}
-
-function SearchBox({ style, searchText, setSearchText }:
-    { style: object | {}, searchText: string, setSearchText: Dispatch<SetStateAction<string>> }): ReactNode {
+function SearchBox({ style, searchText, setSearchText, onlyFriend }:
+    {
+        style: object | {}, searchText: string,
+        setSearchText: Dispatch<SetStateAction<string>>,
+        onlyFriend?: boolean
+    }): ReactNode {
     const formRef = useRef<HTMLFormElement>(null);
-    const [result, setResult] = useState<SearchResult[]>([]);
+    const [result, setResult] = useState<ISearchResult[]>([]);
     const { data: currentUser } = useContext(GlobalContext);
 
     useEffect(() => {
@@ -29,26 +27,26 @@ function SearchBox({ style, searchText, setSearchText }:
 
     const FindUser = async () => {
         const token = sessionStorage.getItem('accessToken') || localStorage.getItem('accessToken');
+        if (searchText.length > 0)
+            await axios.get(`https://localhost:3001/api/Accounts/Find/${searchText}`, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                }
+            }).then(response => {
+                console.log(response.data);
+                // var list = response.data.result;
+                var friends = response.data.listFriend;
+                // // To do: update isFriend prop in the List
 
-        await axios.get(`https://localhost:3001/api/Accounts/Find/${searchText}`, {
-            headers: {
-                Authorization: `Bearer ${token}`,
-            }
-        }).then(response => {
-            console.log(response.data);
-            var list = response.data.result;
-            var friends = response.data.listFriend;
-            // To do: update isFriend prop in the List
+                // list.map((item: any, index: number) => {
+                //     if (friends.filter((p: any) => (p.user1 === item.username || p.user2 === item.username)).length > 0)
+                //         item.isFriend = true;
+                // });
 
-            list.map((item: any, index: number) => {
-                if (friends.filter((p: any) => (p.user1 === item.username || p.user2 === item.username)).length > 0)
-                    item.isFriend = true;
-            });
-
-            setResult(response.data.result);
-        }).catch(error => {
-            console.error(error);
-        })
+                setResult(friends);
+            }).catch(error => {
+                console.error(error);
+            })
     }
 
     const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
@@ -104,7 +102,7 @@ function SearchBox({ style, searchText, setSearchText }:
                             {result.map((user, index) =>
                                 <li key={user.username} style={{ display: 'flex' }}>
                                     <Link href={`/chat/${user.username}`}>{user.username}</Link>
-                                    <div className="" style={{ marginRight: '0', marginLeft: 'auto' }}>
+                                    {/* <div className="" style={{ marginRight: '0', marginLeft: 'auto' }}>
                                         {!user.isFriend &&
                                             <button
                                                 onClick={(e) => handleAddFriend(user.username)}
@@ -112,7 +110,7 @@ function SearchBox({ style, searchText, setSearchText }:
                                                 style={{ padding: 0 }}>
                                                 Add Friend
                                             </button>}
-                                    </div>
+                                    </div> */}
                                 </li>
                             )}
                         </ul>}

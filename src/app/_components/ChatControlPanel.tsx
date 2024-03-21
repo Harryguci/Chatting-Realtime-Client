@@ -1,4 +1,4 @@
-import { Fragment, ReactNode, useContext, useEffect, useLayoutEffect, useRef, useState } from "react";
+import { Fragment, ReactNode, useCallback, useContext, useEffect, useLayoutEffect, useRef, useState } from "react";
 import '../_assets/scss/components/chatControl.scss';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faAngleDown, faPlus } from "@fortawesome/free-solid-svg-icons";
@@ -13,6 +13,7 @@ import swal from "sweetalert";
 import { GlobalContext } from "../Context/store";
 import TimeDiff from "../_helper/TimeDiff";
 import { server } from "@/config";
+import CreateNewChatForm from "./CreateNewChatForm";
 
 function ChatControlPanel({ style }: { style: object | undefined }): ReactNode {
     const router = useRouter();
@@ -20,7 +21,11 @@ function ChatControlPanel({ style }: { style: object | undefined }): ReactNode {
     const [search, setSearch] = useState<string>("");
     const [messageCards, setMessageCards] = useState<IMessageCard[]>([]);
     const [loading, setLoading] = useState<boolean>(true);
+    const [showCreateForm, setShowCreateForm] = useState<boolean>(false);
+
     const messageCardWrapRef = useRef<HTMLDivElement>(null);
+    const createNewBtnRef = useRef<HTMLButtonElement>(null);
+
     const { data: userData } = useContext(GlobalContext);
 
     const getRoomId = async (friend: string) => {
@@ -90,7 +95,7 @@ function ChatControlPanel({ style }: { style: object | undefined }): ReactNode {
                 }
 
                 listFriend = [...listFriend, messageCardItem];
-                console.log(listFriend);
+                // console.log(listFriend);
 
                 listFriend.sort((a: any, b: any) => {
                     if (b.user.lastLoginNumber === -1 || (a.user.lastLoginNumber < b.user.lastLoginNumber))
@@ -123,6 +128,10 @@ function ChatControlPanel({ style }: { style: object | undefined }): ReactNode {
             messageCardWrapRef.current.style.opacity = loading ? '0' : '1';
     }, [loading]);
 
+    const closeForm = useCallback((ev: any) => {
+        setShowCreateForm(false);
+    }, [])
+
     return (
         <Fragment>
             <div className="chat-control-panel" style={style ?? {}}>
@@ -135,14 +144,18 @@ function ChatControlPanel({ style }: { style: object | undefined }): ReactNode {
                         </button>
                     </div>
                     <div className="">
-                        <button className="btn bg-primary-gradient rounded-1 box-shadow-1">
+                        <button ref={createNewBtnRef} onClick={e =>
+                            setShowCreateForm(prev => !prev)
+                        }
+                            className="btn bg-primary-gradient rounded-1 box-shadow-1">
                             {!loading && <FontAwesomeIcon icon={faPlus} />}{" "}Create New Chat
                         </button>
                     </div>
                 </div>
                 <SearchBox style={{ margin: '2rem 0' }}
                     searchText={search}
-                    setSearchText={setSearch} />
+                    setSearchText={setSearch}
+                    onlyFriend={true} />
                 <div ref={messageCardWrapRef} style={{ transition: 'opacity 0.3s 0.3s ease-in-out', opacity: '0' }}
                     className="message-card-wrapper">
                     {messageCards && messageCards.length > 0
@@ -153,7 +166,8 @@ function ChatControlPanel({ style }: { style: object | undefined }): ReactNode {
                         <h3 className="text-center text-blue">Hãy thêm 1 bạn bè để trò chuyện</h3>}
                 </div>
             </div>
-        </Fragment>
+            {showCreateForm && <CreateNewChatForm currentUser={userData} close={closeForm} className="center" bgShadow={true} />}
+        </Fragment >
     )
 }
 

@@ -169,7 +169,7 @@ export default function NavbarSidebar() {
                                 sizes="100vw"
                                 style={{ width: '100%', height: 'auto' }}
                                 src="/Harryguci-Logo-Primary.svg"
-                                blurDataURL="//Harryguci-Logo-Primary-blur.png"
+                                blurDataURL="/Harryguci-Logo-Primary-blur.png"
                                 placeholder="blur"
                                 alt="avatar" />
                         </div>

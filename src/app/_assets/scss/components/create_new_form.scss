@@ -1,0 +1,54 @@
+.create-new-form {
+    padding: 1rem;
+    z-index: 500;
+    background: #ffffff;
+    min-width: 500px;
+    max-width: 100vw;
+
+    .bg-dark {
+        z-index: 500;
+    }
+
+    .close-btn {
+        position: absolute;
+        right: 0;
+        top: 0;
+    }
+
+    >div {
+        display: flex;
+        gap: 1rem;
+        margin: 1rem 0;
+
+        label {
+            flex: 0 0 20%;
+        }
+
+        input {
+            flex: 0 0 calc(80% - 1rem);
+        }
+    }
+
+    .result-wrapper {
+        display: block;
+
+        h3 {
+            margin: 0.5rem 0;
+        }
+
+        &__item {
+            position: relative;
+            padding: 1rem;
+            display: flex;
+            margin: 0.5rem 0;
+            background: whitesmoke;
+            
+            .add-btn {
+                display: block;
+                position: relative;
+                margin-right: 0;
+                margin-left: auto;
+            }
+        }
+    }
+}
