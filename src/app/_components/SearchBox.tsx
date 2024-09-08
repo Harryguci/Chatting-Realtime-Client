@@ -28,7 +28,7 @@ function SearchBox({ style, searchText, setSearchText, onlyFriend }:
     const FindUser = async () => {
         const token = sessionStorage.getItem('accessToken') || localStorage.getItem('accessToken');
         if (searchText.length > 0)
-            await axios.get(`https://localhost:3001/api/Accounts/Find/${searchText}`, {
+            await axios.get(`${process.env.NEXT_PUBLIC_SERVER_URI}/api/Accounts/Find/${searchText}`, {
                 headers: {
                     Authorization: `Bearer ${token}`,
                 }
